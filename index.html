@@ -260,6 +260,9 @@ a { color: inherit; text-decoration: none; }
 }
 .marker-hotspot__pulse {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
   border-radius: 50%;
   animation: marker-pulse 2.5s ease-out infinite;
   z-index: 1;
@@ -298,8 +301,8 @@ a { color: inherit; text-decoration: none; }
   animation-duration: 3.5s;
 }
 @keyframes marker-pulse {
-  0% { transform: scale(0.8); opacity: 1; }
-  100% { transform: scale(2.2); opacity: 0; }
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
 }
 
 /* ===== Map Popup ===== */
@@ -759,6 +762,14 @@ a { color: inherit; text-decoration: none; }
   height: 18px;
   color: var(--accent-cyan);
 }
+a.transport-item {
+  display: flex;
+  cursor: pointer;
+}
+a.transport-item:hover {
+  background: var(--bg-surface-alt);
+  border-radius: var(--radius-sm);
+}
 .transport-item {
   display: flex;
   align-items: center;
@@ -1021,7 +1032,7 @@ a { color: inherit; text-decoration: none; }
               <span class="booking-card__tag">海景</span>
               <span class="booking-card__tag booking-card__tag--highlight">藍眼淚最佳觀測點</span>
             </div>
-            <button class="booking-card__cta" aria-label="立即預訂梅石軍官茶室">立即預訂</button>
+            <a href="https://matsu.live/book-a-room" target="_blank" rel="noopener noreferrer" class="booking-card__cta" aria-label="立即預訂梅石軍官茶室" style="text-decoration:none;display:block;text-align:center;">立即預訂</a>
           </div>
         </div>
         <!-- Card 2 -->
@@ -1041,7 +1052,7 @@ a { color: inherit; text-decoration: none; }
               <span class="booking-card__tag">藝術家駐村</span>
               <span class="booking-card__tag booking-card__tag--highlight">深度體驗</span>
             </div>
-            <button class="booking-card__cta" aria-label="立即預訂大梅石創生共享家">立即預訂</button>
+            <a href="https://matsu.live/book-a-room" target="_blank" rel="noopener noreferrer" class="booking-card__cta" aria-label="立即預訂大梅石創生共享家" style="text-decoration:none;display:block;text-align:center;">立即預訂</a>
           </div>
         </div>
       </div>
@@ -1079,26 +1090,26 @@ a { color: inherit; text-decoration: none; }
             <svg class="transport-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
             航班 Flights
           </div>
-          <div class="transport-item">
+          <a href="https://www.uniair.com.tw/rwd/B2C/booking/ubk_search.aspx" target="_blank" rel="noopener noreferrer" class="transport-item" style="text-decoration:none;color:inherit;">
             <div>
               <div class="transport-item__route">台北松山 → 南竿</div>
               <div class="transport-item__detail">立榮航空 UNI AIR · 每日 3-4 班</div>
             </div>
             <div class="transport-item__time">
               <div class="transport-item__duration">50 分鐘</div>
-              <div class="transport-item__freq">NT$2,100 起</div>
+              <div class="transport-item__freq">NT$2,100 起 →</div>
             </div>
-          </div>
-          <div class="transport-item">
+          </a>
+          <a href="https://www.uniair.com.tw/rwd/B2C/booking/ubk_search.aspx" target="_blank" rel="noopener noreferrer" class="transport-item" style="text-decoration:none;color:inherit;">
             <div>
               <div class="transport-item__route">台中清泉崗 → 南竿</div>
               <div class="transport-item__detail">立榮航空 UNI AIR · 每週 3 班</div>
             </div>
             <div class="transport-item__time">
               <div class="transport-item__duration">65 分鐘</div>
-              <div class="transport-item__freq">NT$2,300 起</div>
+              <div class="transport-item__freq">NT$2,300 起 →</div>
             </div>
-          </div>
+          </a>
         </div>
         <!-- Ferry -->
         <div class="transport-section">
@@ -1106,16 +1117,16 @@ a { color: inherit; text-decoration: none; }
             <svg class="transport-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M12 10V3"/></svg>
             客輪 Ferry
           </div>
-          <div class="transport-item">
+          <a href="https://www.matsuebs.com/home/SelectShip" target="_blank" rel="noopener noreferrer" class="transport-item" style="text-decoration:none;color:inherit;">
             <div>
               <div class="transport-item__route">基隆 → 東引 → 南竿</div>
               <div class="transport-item__detail">臺馬之星 · 夜航（每日一班）</div>
             </div>
             <div class="transport-item__time">
               <div class="transport-item__duration">8-10 小時</div>
-              <div class="transport-item__freq">NT$1,050 起</div>
+              <div class="transport-item__freq">NT$1,050 起 →</div>
             </div>
-          </div>
+          </a>
         </div>
         <!-- Inter-island -->
         <div class="transport-section">
@@ -1123,26 +1134,26 @@ a { color: inherit; text-decoration: none; }
             <svg class="transport-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
             島際交通 Inter-island
           </div>
-          <div class="transport-item">
+          <a href="https://www.matsuebs.com/home/SelectShip" target="_blank" rel="noopener noreferrer" class="transport-item" style="text-decoration:none;color:inherit;">
             <div>
               <div class="transport-item__route">南竿 ↔ 北竿</div>
               <div class="transport-item__detail">交通船 · 每日多班</div>
             </div>
             <div class="transport-item__time">
               <div class="transport-item__duration">15 分鐘</div>
-              <div class="transport-item__freq">NT$160</div>
+              <div class="transport-item__freq">NT$160 →</div>
             </div>
-          </div>
-          <div class="transport-item">
+          </a>
+          <a href="https://www.matsuebs.com/home/SelectShip" target="_blank" rel="noopener noreferrer" class="transport-item" style="text-decoration:none;color:inherit;">
             <div>
               <div class="transport-item__route">南竿 → 東莒 / 西莒</div>
               <div class="transport-item__detail">交通船 · 每日 2 班</div>
             </div>
             <div class="transport-item__time">
               <div class="transport-item__duration">50 分鐘</div>
-              <div class="transport-item__freq">NT$200</div>
+              <div class="transport-item__freq">NT$200 →</div>
             </div>
-          </div>
+          </a>
         </div>
       </div>
     </div>
@@ -1232,15 +1243,51 @@ a { color: inherit; text-decoration: none; }
     { id: 'xiju', nameZh: '西莒坤坵', nameEn: 'Xiju Kunqiu', lat: 25.9680, lng: 119.9440, intensity: 'high', viewTime: '20:00-00:00', waterTemp: '18°C', wind: 'SW 9km/h', tide: '退潮中' }
   ];
 
-  const FORECAST_MOCK = [
-    { weekday: '今天', date: '04/06', moon: '🌒', wind: 'SW 12', temp: '18°', score: 76, color: '#00D4FF' },
-    { weekday: '週二', date: '04/07', moon: '🌒', wind: 'S 10', temp: '19°', score: 82, color: '#00D4FF' },
-    { weekday: '週三', date: '04/08', moon: '🌑', wind: 'SE 8', temp: '20°', score: 91, color: '#00D4FF' },
-    { weekday: '週四', date: '04/09', moon: '🌑', wind: 'S 6', temp: '20°', score: 88, color: '#00D4FF' },
-    { weekday: '週五', date: '04/10', moon: '🌘', wind: 'SW 14', temp: '19°', score: 65, color: '#1A8A9E' },
-    { weekday: '週六', date: '04/11', moon: '🌗', wind: 'W 18', temp: '17°', score: 42, color: '#3A5A6E' },
-    { weekday: '週日', date: '04/12', moon: '🌗', wind: 'NW 20', temp: '16°', score: 35, color: '#3A5A6E' }
-  ];
+  /**
+   * 動態生成未來 7 天預報 Mock 資料（基於台灣時區 UTC+8）
+   * Dynamically generate 7-day forecast mock data based on Taiwan local date
+   */
+  function generateForecastMock() {
+    // 強制使用台灣時區 (UTC+8) 取得今天日期，避免 toISOString() 回傳 UTC 日期
+    // Force Taiwan timezone (UTC+8) to get today's date correctly
+    var now = new Date();
+    var taiwanOffset = 8 * 60; // UTC+8 in minutes
+    var localOffset = now.getTimezoneOffset(); // 本地時區與 UTC 的差距（分鐘）
+    var taiwanTime = new Date(now.getTime() + (taiwanOffset + localOffset) * 60000);
+
+    var weekdays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+    var moonPhases = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
+    var winds = ['SW 12', 'S 10', 'SE 8', 'S 6', 'SW 14', 'W 18', 'NW 20'];
+    var temps = ['18°', '19°', '20°', '20°', '19°', '17°', '16°'];
+    var scores = [76, 82, 91, 88, 65, 42, 35];
+
+    // 根據月相週期估算（農曆約 29.5 天一個週期）
+    // Estimate moon phase based on lunar cycle (~29.5 days)
+    var lunarEpoch = new Date(2026, 0, 29).getTime(); // 2026/1/29 農曆新年（約為新月）
+    var daysSinceNewMoon = Math.floor((taiwanTime.getTime() - lunarEpoch) / 86400000) % 30;
+    if (daysSinceNewMoon < 0) daysSinceNewMoon += 30;
+
+    var result = [];
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(taiwanTime);
+      d.setDate(d.getDate() + i);
+      var mm = String(d.getMonth() + 1).padStart(2, '0');
+      var dd = String(d.getDate()).padStart(2, '0');
+      var dayOfWeek = d.getDay();
+      var moonIdx = Math.floor(((daysSinceNewMoon + i) % 30) / 3.75) % 8;
+
+      result.push({
+        weekday: i === 0 ? '今天' : weekdays[dayOfWeek],
+        date: mm + '/' + dd,
+        moon: moonPhases[moonIdx],
+        wind: winds[i % winds.length],
+        temp: temps[i % temps.length],
+        score: scores[i % scores.length]
+      });
+    }
+    return result;
+  }
+  const FORECAST_MOCK = generateForecastMock();
 
   // 運行時資料（由 API 或 Mock 填充）
   let HOTSPOTS = [...HOTSPOTS_MOCK];
@@ -1603,6 +1650,18 @@ a { color: inherit; text-decoration: none; }
 
   // ===== Init =====
   async function init() {
+    // 0. 更新狀態列日期為台灣今天日期 / Update status bar to Taiwan today's date
+    (function updateStatusDate() {
+      var now = new Date();
+      var twOff = 8 * 60;
+      var tw = new Date(now.getTime() + (twOff + now.getTimezoneOffset()) * 60000);
+      var y = tw.getFullYear();
+      var m = String(tw.getMonth() + 1).padStart(2, '0');
+      var d = String(tw.getDate()).padStart(2, '0');
+      var el = document.getElementById('statusDate');
+      if (el) el.textContent = y + '/' + m + '/' + d;
+    })();
+
     // 1. 先用 Mock 資料立即渲染（零延遲）
     buildForecast();
     initMap();
