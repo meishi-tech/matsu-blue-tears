@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>梅石譯境 Meistone — 藍眼淚觀測 Blue Tears</title>
+<meta name="description" content="馬祖藍眼淚即時觀測與住宿預訂 — 梅石譯境 Meistone">
+<link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== CSS Custom Properties ===== */
+:root {
+  --bg-primary: #0A1628;
+  --bg-secondary: #0D1E36;
+  --bg-surface: #112240;
+  --bg-surface-alt: #152A4A;
+  --bg-overlay: rgba(10, 22, 40, 0.92);
+  --accent-cyan: #00D4FF;
+  --accent-cyan-dim: rgba(0, 212, 255, 0.15);
+  --accent-cyan-glow: rgba(0, 212, 255, 0.4);
+  --accent-gold: #F0C040;
+  --accent-gold-hover: #F5D060;
+  --accent-gold-dim: rgba(240, 192, 64, 0.15);
+  --teal-deep: #0B3D5E;
+  --teal-soft: #1A8A9E;
+  --stone-muted: #B8A99A;
+  --text-primary: #E8ECF2;
+  --text-secondary: #8B9BB4;
+  --text-muted: #5A6B84;
+  --text-accent: var(--accent-cyan);
+  --border: rgba(255, 255, 255, 0.06);
+  --border-glow: rgba(0, 212, 255, 0.2);
+  --intensity-high: #00D4FF;
+  --intensity-medium: #1A8A9E;
+  --intensity-low: #3A5A6E;
+  --font-display: 'Noto Serif TC', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.15);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --transition-fast: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-medium: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --status-bar-h: 72px;
+  --nav-bar-h: 64px;
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { 
+  height: 100%; 
+  -webkit-text-size-adjust: 100%;
+  font-feature-settings: 'cv11' 1, 'ss01' 1;
+}
+body {
+  height: 100%;
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+button { 
+  font-family: inherit; 
+  cursor: pointer; 
+  border: none; 
+  background: none; 
+  color: inherit;
+  font-size: inherit;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ===== App Shell ===== */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== Status Bar ===== */
+.status-bar {
+  position: relative;
+  z-index: 20;
+  padding: 8px 16px;
+  padding-top: calc(8px + var(--safe-top));
+  background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(10, 22, 40, 0.85) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--status-bar-h);
+}
+.status-bar__logo {
+  flex-shrink: 0;
+}
+.status-bar__info {
+  flex: 1;
+  min-width: 0;
+}
+.status-bar__title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+.status-bar__subtitle {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-bar__season {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--accent-cyan);
+  font-weight: 500;
+}
+.status-bar__season::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.5; box-shadow: 0 0 2px var(--accent-cyan); }
+  50% { opacity: 1; box-shadow: 0 0 6px var(--accent-cyan); }
+}
+
+/* Score Ring */
+.score-ring {
+  flex-shrink: 0;
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.score-ring__svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+.score-ring__track {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 3;
+}
+.score-ring__fill {
+  fill: none;
+  stroke: var(--accent-cyan);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 126;
+  stroke-dashoffset: 30;
+  filter: drop-shadow(0 0 4px var(--accent-cyan-glow));
+  transition: stroke-dashoffset 1s ease;
+}
+.score-ring__value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  line-height: 1;
+}
+.score-ring__label {
+  font-size: 7px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  position: absolute;
+  bottom: 2px;
+}
+
+/* Weather Strip */
+.weather-strip {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.weather-strip__row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.weather-strip__temp {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+.weather-strip__update {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+/* ===== Map Container ===== */
+.map-container {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+#map {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+}
+.maplibregl-canvas {
+  filter: invert(1) brightness(0.35) contrast(1.2) saturate(0.3) hue-rotate(180deg);
+}
+
+/* Custom map markers — 雙層結構修正 */
+/* 外層 .marker-hotspot-wrapper：交由 MapLibre 控制 transform 定位 */
+/* 不可在此元素上使用任何 CSS transform、position: relative、或 animation */
+.marker-hotspot-wrapper {
+  width: 40px;   /* 明確尺寸，讓 MapLibre 正確計算 anchor 偏移 */
+  height: 40px;
+  cursor: pointer;
+}
+/* 內層 .marker-hotspot：承載所有視覺樣式與動畫 */
+.marker-hotspot {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.marker-hotspot__core {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid;
+  position: relative;
+  z-index: 2;
+  transition: transform var(--transition-fast);
+}
+.marker-hotspot-wrapper:hover .marker-hotspot__core {
+  transform: scale(1.3);
+}
+.marker-hotspot__pulse {
+  position: absolute;
+  border-radius: 50%;
+  animation: marker-pulse 2.5s ease-out infinite;
+  z-index: 1;
+}
+.marker-hotspot--high .marker-hotspot__core {
+  background: var(--intensity-high);
+  border-color: var(--intensity-high);
+  box-shadow: 0 0 8px var(--intensity-high), 0 0 16px rgba(0, 212, 255, 0.3);
+}
+.marker-hotspot--high .marker-hotspot__pulse {
+  width: 36px;
+  height: 36px;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%);
+}
+.marker-hotspot--medium .marker-hotspot__core {
+  background: var(--intensity-medium);
+  border-color: var(--intensity-medium);
+  box-shadow: 0 0 6px var(--intensity-medium);
+}
+.marker-hotspot--medium .marker-hotspot__pulse {
+  width: 28px;
+  height: 28px;
+  background: radial-gradient(circle, rgba(26, 138, 158, 0.25) 0%, transparent 70%);
+}
+.marker-hotspot--low .marker-hotspot__core {
+  background: var(--intensity-low);
+  border-color: var(--intensity-low);
+  box-shadow: 0 0 4px rgba(58, 90, 110, 0.4);
+  width: 10px;
+  height: 10px;
+}
+.marker-hotspot--low .marker-hotspot__pulse {
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle, rgba(58, 90, 110, 0.2) 0%, transparent 70%);
+  animation-duration: 3.5s;
+}
+@keyframes marker-pulse {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* ===== Map Popup ===== */
+.maplibregl-popup-content {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-glow) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 0 !important;
+  box-shadow: var(--shadow-card), var(--shadow-glow) !important;
+  color: var(--text-primary) !important;
+  max-width: 280px !important;
+  min-width: 240px !important;
+}
+.maplibregl-popup-tip {
+  border-top-color: var(--bg-surface) !important;
+}
+.maplibregl-popup-close-button {
+  color: var(--text-secondary) !important;
+  font-size: 18px !important;
+  padding: 6px 10px !important;
+  right: 2px !important;
+  top: 2px !important;
+}
+.maplibregl-popup-close-button:hover {
+  color: var(--text-primary) !important;
+  background: none !important;
+}
+
+.popup-card {
+  padding: 16px;
+}
+.popup-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.popup-card__name-zh {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.popup-card__name-en {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+.popup-card__intensity {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.popup-card__intensity--high {
+  background: rgba(0, 212, 255, 0.15);
+  color: var(--intensity-high);
+}
+.popup-card__intensity--medium {
+  background: rgba(26, 138, 158, 0.15);
+  color: var(--intensity-medium);
+}
+.popup-card__intensity--low {
+  background: rgba(58, 90, 110, 0.2);
+  color: var(--intensity-low);
+}
+.popup-card__intensity-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.popup-card__details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.popup-card__detail {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+}
+.popup-card__detail-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+.popup-card__detail-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.popup-card__actions {
+  display: flex;
+  gap: 8px;
+}
+.popup-card__btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+.popup-card__btn--primary {
+  background: var(--accent-gold);
+  color: var(--bg-primary);
+}
+.popup-card__btn--primary:hover {
+  background: var(--accent-gold-hover);
+  transform: translateY(-1px);
+}
+.popup-card__btn--secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.popup-card__btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* ===== Bottom Nav Bar ===== */
+.nav-bar {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border);
+  padding-bottom: var(--safe-bottom);
+  min-height: var(--nav-bar-h);
+}
+.nav-bar__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 4px;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-bar__item:hover {
+  color: var(--text-secondary);
+}
+.nav-bar__item.active {
+  color: var(--accent-cyan);
+}
+.nav-bar__item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: var(--accent-cyan);
+  border-radius: 0 0 2px 2px;
+}
+.nav-bar__icon {
+  width: 22px;
+  height: 22px;
+}
+.nav-bar__label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ===== Panels (Overlay) ===== */
+.panel-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+}
+.panel-overlay.active {
+  pointer-events: auto;
+  visibility: visible;
+}
+.panel-overlay__backdrop {
+  flex: 1;
+  background: rgba(10, 22, 40, 0.6);
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+}
+.panel-overlay.active .panel-overlay__backdrop {
+  opacity: 1;
+}
+.panel-overlay__content {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-glow);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  max-height: 75vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform var(--transition-slow);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.panel-overlay.active .panel-overlay__content {
+  transform: translateY(0);
+}
+.panel-overlay__handle {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 8px;
+  cursor: grab;
+}
+.panel-overlay__handle-bar {
+  width: 36px;
+  height: 4px;
+  background: var(--text-muted);
+  border-radius: 2px;
+  opacity: 0.5;
+}
+.panel-overlay__header {
+  padding: 4px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.panel-overlay__title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+.panel-overlay__close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+.panel-overlay__close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+.panel-overlay__body {
+  padding: 0 20px 24px;
+}
+
+/* ===== Booking Card ===== */
+.booking-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: border-color var(--transition-fast);
+}
+.booking-card:hover {
+  border-color: var(--border-glow);
+}
+.booking-card__image {
+  height: 140px;
+  background: linear-gradient(135deg, var(--teal-deep) 0%, var(--bg-surface-alt) 50%, var(--teal-deep) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.booking-card__image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 30% 60%, rgba(0, 212, 255, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 40%, rgba(26, 138, 158, 0.1) 0%, transparent 50%);
+}
+.booking-card__image-label {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+  font-style: italic;
+}
+.booking-card__body {
+  padding: 14px;
+}
+.booking-card__name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.booking-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--accent-gold);
+  margin-bottom: 8px;
+}
+.booking-card__rating-num {
+  font-weight: 600;
+}
+.booking-card__price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+.booking-card__price span {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.booking-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.booking-card__tag {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.booking-card__tag--highlight {
+  background: var(--accent-cyan-dim);
+  color: var(--accent-cyan);
+  border-color: rgba(0, 212, 255, 0.2);
+}
+.booking-card__cta {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-gold);
+  color: var(--bg-primary);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+.booking-card__cta:hover {
+  background: var(--accent-gold-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(240, 192, 64, 0.25);
+}
+
+/* ===== Forecast Panel ===== */
+.forecast-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.forecast-day {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.forecast-day__date {
+  width: 52px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.forecast-day__weekday {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.forecast-day__date-num {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.forecast-day__moon {
+  width: 24px;
+  text-align: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.forecast-day__conditions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.forecast-day__weather {
+  font-size: 11px;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 8px;
+}
+.forecast-day__score {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.forecast-day__score-bar {
+  width: 48px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.forecast-day__score-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+.forecast-day__score-value {
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 24px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== Transport Panel ===== */
+.transport-section {
+  margin-bottom: 20px;
+}
+.transport-section__title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.transport-section__icon {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-cyan);
+}
+.transport-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: var(--bg-surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.transport-item__route {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+.transport-item__detail {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.transport-item__time {
+  text-align: right;
+  flex-shrink: 0;
+}
+.transport-item__duration {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+}
+.transport-item__freq {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ===== Profile Panel (我的) ===== */
+.profile-section {
+  text-align: center;
+  padding: 20px 0;
+}
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal-deep), var(--accent-cyan));
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--bg-primary);
+}
+.profile-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.profile-email {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+.profile-menu {
+  text-align: left;
+}
+.profile-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: background var(--transition-fast);
+}
+.profile-menu__item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.profile-menu__item i {
+  width: 20px;
+  height: 20px;
+  color: var(--text-secondary);
+}
+
+/* ===== Bioluminescence Particles (CSS only) ===== */
+.bio-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.bio-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  opacity: 0;
+  animation: float-particle linear infinite;
+}
+@keyframes float-particle {
+  0% { opacity: 0; transform: translateY(0) translateX(0); }
+  15% { opacity: 0.6; }
+  85% { opacity: 0.3; }
+  100% { opacity: 0; transform: translateY(-120px) translateX(30px); }
+}
+.bio-particle:nth-child(1) { left: 10%; bottom: 20%; animation-duration: 6s; animation-delay: 0s; width: 2px; height: 2px; }
+.bio-particle:nth-child(2) { left: 25%; bottom: 10%; animation-duration: 8s; animation-delay: 1.2s; }
+.bio-particle:nth-child(3) { left: 45%; bottom: 25%; animation-duration: 7s; animation-delay: 0.5s; width: 4px; height: 4px; }
+.bio-particle:nth-child(4) { left: 60%; bottom: 15%; animation-duration: 9s; animation-delay: 2s; width: 2px; height: 2px; }
+.bio-particle:nth-child(5) { left: 75%; bottom: 30%; animation-duration: 6.5s; animation-delay: 0.8s; }
+.bio-particle:nth-child(6) { left: 85%; bottom: 5%; animation-duration: 7.5s; animation-delay: 3s; width: 2px; height: 2px; }
+.bio-particle:nth-child(7) { left: 35%; bottom: 35%; animation-duration: 8.5s; animation-delay: 1.8s; width: 3px; height: 3px; }
+.bio-particle:nth-child(8) { left: 55%; bottom: 8%; animation-duration: 10s; animation-delay: 0.3s; }
+
+/* ===== MapLibre Overrides ===== */
+.maplibregl-ctrl-attrib { display: none !important; }
+.maplibregl-ctrl-logo { display: none !important; }
+.maplibregl-ctrl-group {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+.maplibregl-ctrl-group button {
+  background: transparent !important;
+  border-bottom-color: var(--border) !important;
+}
+.maplibregl-ctrl-group button:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+.maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  filter: invert(1) brightness(0.8);
+}
+
+/* ===== Responsive ===== */
+@media (min-width: 768px) {
+  .status-bar {
+    padding: 10px 24px;
+  }
+  .panel-overlay__content {
+    max-width: 420px;
+    margin: 0 auto;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+  .maplibregl-popup-content {
+    max-width: 320px !important;
+  }
+}
+@media (min-width: 1024px) {
+  .panel-overlay__content {
+    max-width: 480px;
+  }
+}
+
+/* Scrollbar */
+.panel-overlay__content::-webkit-scrollbar { width: 4px; }
+.panel-overlay__content::-webkit-scrollbar-track { background: transparent; }
+.panel-overlay__content::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 2px; }
+
+/* Stars for rating */
+.stars {
+  color: var(--accent-gold);
+  letter-spacing: 1px;
+  font-size: 11px;
+}
+</style>
+</head>
+<body>
+<div class="app-shell" id="app">
+  <!-- Status Bar -->
+  <header class="status-bar" role="banner" aria-label="狀態列">
+    <!-- Inline SVG Logo -->
+    <div class="status-bar__logo" aria-label="梅石 Meistone 標誌">
+      <svg width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="梅石 Meistone">
+        <path d="M6 32 C6 32 12 22 18 26 C24 30 20 18 24 14 C28 10 30 20 36 18 C42 16 42 32 42 32" stroke="#00D4FF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.9"/>
+        <path d="M4 36 C4 36 10 28 16 31 C22 34 26 24 30 28 C34 32 38 26 44 30" stroke="#1A8A9E" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <circle cx="22" cy="16" r="3" fill="#00D4FF" opacity="0.9">
+          <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="2.5;3.5;2.5" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="22" cy="16" r="6" fill="none" stroke="#00D4FF" stroke-width="0.5" opacity="0.3">
+          <animate attributeName="r" values="4;8;4" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.3;0.05;0.3" dur="3s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+    <div class="status-bar__info">
+      <div class="status-bar__title">梅石譯境 Meistone</div>
+      <div class="status-bar__subtitle">
+        <span class="status-bar__season">藍眼淚季</span>
+        <span id="statusDate">2026/04/06</span>
+      </div>
+    </div>
+    <!-- Score Ring -->
+    <div class="score-ring" aria-label="今晚藍眼淚預測分數 76 分" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="76">
+      <svg class="score-ring__svg" width="48" height="48" viewBox="0 0 48 48">
+        <circle class="score-ring__track" cx="24" cy="24" r="20"/>
+        <circle class="score-ring__fill" cx="24" cy="24" r="20"/>
+      </svg>
+      <span class="score-ring__value">76</span>
+    </div>
+    <!-- Weather -->
+    <div class="weather-strip" aria-label="天氣資訊">
+      <div class="weather-strip__row">
+        <span class="weather-strip__temp">18°C</span>
+        <span>🌙</span>
+      </div>
+      <div class="weather-strip__row" style="font-size:10px;">
+        <span>SW 12km/h</span>
+      </div>
+      <div class="weather-strip__update" id="updateTime">即時更新 03:58</div>
+    </div>
+  </header>
+
+  <!-- Map -->
+  <main class="map-container" role="main" aria-label="藍眼淚觀測地圖">
+    <div id="map"></div>
+    <!-- Bio particles overlay -->
+    <div class="bio-particles" aria-hidden="true">
+      <div class="bio-particle"></div>
+      <div class="bio-particle"></div>
+      <div class="bio-particle"></div>
+      <div class="bio-particle"></div>
+      <div class="bio-particle"></div>
+      <div class="bio-particle"></div>
+      <div class="bio-particle"></div>
+      <div class="bio-particle"></div>
+    </div>
+  </main>
+
+  <!-- Panel Overlays -->
+  <!-- Booking Panel -->
+  <div class="panel-overlay" id="panelStay" role="dialog" aria-label="住宿預訂" aria-hidden="true">
+    <div class="panel-overlay__backdrop" data-close-panel></div>
+    <div class="panel-overlay__content">
+      <div class="panel-overlay__handle"><div class="panel-overlay__handle-bar"></div></div>
+      <div class="panel-overlay__header">
+        <h2 class="panel-overlay__title">住宿推薦</h2>
+        <button class="panel-overlay__close" data-close-panel aria-label="關閉"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-overlay__body">
+        <!-- Card 1 -->
+        <div class="booking-card">
+          <div class="booking-card__image">
+            <span class="booking-card__image-label">歷史建築 · 海景客房</span>
+          </div>
+          <div class="booking-card__body">
+            <div class="booking-card__name">歷史建築梅石軍官茶室</div>
+            <div class="booking-card__rating">
+              <span class="stars">★★★★★</span>
+              <span class="booking-card__rating-num">4.9</span>
+            </div>
+            <div class="booking-card__price">NT$2,800<span>/晚起</span></div>
+            <div class="booking-card__tags">
+              <span class="booking-card__tag">歷史建築</span>
+              <span class="booking-card__tag">海景</span>
+              <span class="booking-card__tag booking-card__tag--highlight">藍眼淚最佳觀測點</span>
+            </div>
+            <button class="booking-card__cta" aria-label="立即預訂梅石軍官茶室">立即預訂</button>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="booking-card">
+          <div class="booking-card__image" style="background: linear-gradient(135deg, #1a3a4a 0%, #0f2a3a 50%, #1a4a5a 100%);">
+            <span class="booking-card__image-label">共享空間 · 藝文體驗</span>
+          </div>
+          <div class="booking-card__body">
+            <div class="booking-card__name">大梅石創生共享家</div>
+            <div class="booking-card__rating">
+              <span class="stars">★★★★★</span>
+              <span class="booking-card__rating-num">4.7</span>
+            </div>
+            <div class="booking-card__price">NT$1,600<span>/晚起</span></div>
+            <div class="booking-card__tags">
+              <span class="booking-card__tag">共享空間</span>
+              <span class="booking-card__tag">藝術家駐村</span>
+              <span class="booking-card__tag booking-card__tag--highlight">深度體驗</span>
+            </div>
+            <button class="booking-card__cta" aria-label="立即預訂大梅石創生共享家">立即預訂</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forecast Panel -->
+  <div class="panel-overlay" id="panelForecast" role="dialog" aria-label="藍眼淚七日預報" aria-hidden="true">
+    <div class="panel-overlay__backdrop" data-close-panel></div>
+    <div class="panel-overlay__content">
+      <div class="panel-overlay__handle"><div class="panel-overlay__handle-bar"></div></div>
+      <div class="panel-overlay__header">
+        <h2 class="panel-overlay__title">七日預報</h2>
+        <button class="panel-overlay__close" data-close-panel aria-label="關閉"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-overlay__body">
+        <div class="forecast-list" id="forecastList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transport Panel -->
+  <div class="panel-overlay" id="panelTransport" role="dialog" aria-label="交通資訊" aria-hidden="true">
+    <div class="panel-overlay__backdrop" data-close-panel></div>
+    <div class="panel-overlay__content">
+      <div class="panel-overlay__handle"><div class="panel-overlay__handle-bar"></div></div>
+      <div class="panel-overlay__header">
+        <h2 class="panel-overlay__title">交通方式</h2>
+        <button class="panel-overlay__close" data-close-panel aria-label="關閉"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-overlay__body">
+        <!-- Flights -->
+        <div class="transport-section">
+          <div class="transport-section__title">
+            <svg class="transport-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+            航班 Flights
+          </div>
+          <div class="transport-item">
+            <div>
+              <div class="transport-item__route">台北松山 → 南竿</div>
+              <div class="transport-item__detail">立榮航空 UNI AIR · 每日 3-4 班</div>
+            </div>
+            <div class="transport-item__time">
+              <div class="transport-item__duration">50 分鐘</div>
+              <div class="transport-item__freq">NT$2,100 起</div>
+            </div>
+          </div>
+          <div class="transport-item">
+            <div>
+              <div class="transport-item__route">台中清泉崗 → 南竿</div>
+              <div class="transport-item__detail">立榮航空 UNI AIR · 每週 3 班</div>
+            </div>
+            <div class="transport-item__time">
+              <div class="transport-item__duration">65 分鐘</div>
+              <div class="transport-item__freq">NT$2,300 起</div>
+            </div>
+          </div>
+        </div>
+        <!-- Ferry -->
+        <div class="transport-section">
+          <div class="transport-section__title">
+            <svg class="transport-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M12 10V3"/></svg>
+            客輪 Ferry
+          </div>
+          <div class="transport-item">
+            <div>
+              <div class="transport-item__route">基隆 → 東引 → 南竿</div>
+              <div class="transport-item__detail">臺馬之星 · 夜航（每日一班）</div>
+            </div>
+            <div class="transport-item__time">
+              <div class="transport-item__duration">8-10 小時</div>
+              <div class="transport-item__freq">NT$1,050 起</div>
+            </div>
+          </div>
+        </div>
+        <!-- Inter-island -->
+        <div class="transport-section">
+          <div class="transport-section__title">
+            <svg class="transport-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            島際交通 Inter-island
+          </div>
+          <div class="transport-item">
+            <div>
+              <div class="transport-item__route">南竿 ↔ 北竿</div>
+              <div class="transport-item__detail">交通船 · 每日多班</div>
+            </div>
+            <div class="transport-item__time">
+              <div class="transport-item__duration">15 分鐘</div>
+              <div class="transport-item__freq">NT$160</div>
+            </div>
+          </div>
+          <div class="transport-item">
+            <div>
+              <div class="transport-item__route">南竿 → 東莒 / 西莒</div>
+              <div class="transport-item__detail">交通船 · 每日 2 班</div>
+            </div>
+            <div class="transport-item__time">
+              <div class="transport-item__duration">50 分鐘</div>
+              <div class="transport-item__freq">NT$200</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Panel -->
+  <div class="panel-overlay" id="panelProfile" role="dialog" aria-label="個人資料" aria-hidden="true">
+    <div class="panel-overlay__backdrop" data-close-panel></div>
+    <div class="panel-overlay__content">
+      <div class="panel-overlay__handle"><div class="panel-overlay__handle-bar"></div></div>
+      <div class="panel-overlay__header">
+        <h2 class="panel-overlay__title">我的</h2>
+        <button class="panel-overlay__close" data-close-panel aria-label="關閉"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-overlay__body">
+        <div class="profile-section">
+          <div class="profile-avatar">旅</div>
+          <div class="profile-name">旅人</div>
+          <div class="profile-email">guest@meistone.tw</div>
+        </div>
+        <div class="profile-menu">
+          <div class="profile-menu__item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            個人資料
+          </div>
+          <div class="profile-menu__item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            我的行程
+          </div>
+          <div class="profile-menu__item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            收藏景點
+          </div>
+          <div class="profile-menu__item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            設定
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="nav-bar" role="navigation" aria-label="主選單">
+    <button class="nav-bar__item active" data-tab="map" aria-label="地圖" aria-current="true">
+      <svg class="nav-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+      <span class="nav-bar__label">地圖</span>
+    </button>
+    <button class="nav-bar__item" data-tab="forecast" aria-label="預報">
+      <svg class="nav-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+      <span class="nav-bar__label">預報</span>
+    </button>
+    <button class="nav-bar__item" data-tab="stay" aria-label="住宿">
+      <svg class="nav-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v16"/><path d="M6 12V8"/><path d="M10 12V8"/><path d="M14 12V8"/><path d="M18 12V8"/><path d="M2 12h20"/><path d="M2 22h20"/><path d="M10 22v-4h4v4"/></svg>
+      <span class="nav-bar__label">住宿</span>
+    </button>
+    <button class="nav-bar__item" data-tab="transport" aria-label="交通">
+      <svg class="nav-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M12 10V3"/></svg>
+      <span class="nav-bar__label">交通</span>
+    </button>
+    <button class="nav-bar__item" data-tab="profile" aria-label="我的">
+      <svg class="nav-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="nav-bar__label">我的</span>
+    </button>
+  </nav>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  // ===== API 設定 =====
+  // API Configuration — 後端可用時自動切換為即時資料，否則使用 Mock 資料
+  const API_BASE = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api/v1' 
+    : '/api/v1';
+  let USE_LIVE_API = false; // 偵測後端是否可用 / detected at runtime
+
+  // ===== Mock Data（後端離線時的備援資料）=====
+  const HOTSPOTS_MOCK = [
+    { id: 'beihai', nameZh: '北海坑道', nameEn: 'Beihai Tunnel', lat: 26.1538, lng: 119.9308, intensity: 'high', viewTime: '21:00-01:00', waterTemp: '18°C', wind: 'SW 8km/h', tide: '退潮中' },
+    { id: 'iron-fort', nameZh: '鐵堡', nameEn: 'Iron Fort', lat: 26.1489, lng: 119.9271, intensity: 'high', viewTime: '20:30-00:30', waterTemp: '17°C', wind: 'SW 10km/h', tide: '低潮' },
+    { id: 'dahan', nameZh: '大漢據點', nameEn: 'Dahan Stronghold', lat: 26.1508, lng: 119.9340, intensity: 'medium', viewTime: '21:30-01:00', waterTemp: '18°C', wind: 'S 12km/h', tide: '退潮中' },
+    { id: 'qinbi', nameZh: '芹壁村', nameEn: 'Qinbi Village', lat: 26.2180, lng: 119.9790, intensity: 'medium', viewTime: '22:00-02:00', waterTemp: '17°C', wind: 'SE 6km/h', tide: '漲潮中' },
+    { id: 'dongju', nameZh: '東莒燈塔', nameEn: 'Dongju Lighthouse', lat: 25.9590, lng: 119.9860, intensity: 'low', viewTime: '23:00-02:00', waterTemp: '19°C', wind: 'E 15km/h', tide: '高潮' },
+    { id: 'xiju', nameZh: '西莒坤坵', nameEn: 'Xiju Kunqiu', lat: 25.9680, lng: 119.9440, intensity: 'high', viewTime: '20:00-00:00', waterTemp: '18°C', wind: 'SW 9km/h', tide: '退潮中' }
+  ];
+
+  const FORECAST_MOCK = [
+    { weekday: '今天', date: '04/06', moon: '🌒', wind: 'SW 12', temp: '18°', score: 76, color: '#00D4FF' },
+    { weekday: '週二', date: '04/07', moon: '🌒', wind: 'S 10', temp: '19°', score: 82, color: '#00D4FF' },
+    { weekday: '週三', date: '04/08', moon: '🌑', wind: 'SE 8', temp: '20°', score: 91, color: '#00D4FF' },
+    { weekday: '週四', date: '04/09', moon: '🌑', wind: 'S 6', temp: '20°', score: 88, color: '#00D4FF' },
+    { weekday: '週五', date: '04/10', moon: '🌘', wind: 'SW 14', temp: '19°', score: 65, color: '#1A8A9E' },
+    { weekday: '週六', date: '04/11', moon: '🌗', wind: 'W 18', temp: '17°', score: 42, color: '#3A5A6E' },
+    { weekday: '週日', date: '04/12', moon: '🌗', wind: 'NW 20', temp: '16°', score: 35, color: '#3A5A6E' }
+  ];
+
+  // 運行時資料（由 API 或 Mock 填充）
+  let HOTSPOTS = [...HOTSPOTS_MOCK];
+  let FORECAST_DATA = [...FORECAST_MOCK];
+
+  // ===== API 工具函式 =====
+  /**
+   * 安全的 API 請求封裝（自動 fallback）
+   * Safe API fetch wrapper with automatic fallback to mock data
+   */
+  async function apiFetch(endpoint) {
+    if (!USE_LIVE_API) return null;
+    try {
+      const res = await fetch(API_BASE + endpoint, {
+        headers: { 'Accept': 'application/json' },
+        signal: AbortSignal.timeout(8000) // 8 秒超時
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      return data.data || data;
+    } catch (err) {
+      console.warn('[API] ' + endpoint + ' 失敗，使用 Mock 資料:', err.message);
+      return null;
+    }
+  }
+
+  /**
+   * 偵測後端 API 是否可用
+   * Detect if backend API is available
+   */
+  async function detectAPI() {
+    try {
+      const res = await fetch(API_BASE + '/hotspots', {
+        method: 'HEAD',
+        signal: AbortSignal.timeout(3000)
+      });
+      USE_LIVE_API = res.ok;
+    } catch {
+      USE_LIVE_API = false;
+    }
+    console.log('[API] 後端狀態:', USE_LIVE_API ? '✅ 連線中' : '⚠️ 離線（使用 Mock）');
+  }
+
+  /**
+   * 從後端載入即時熱點資料
+   * Load live hotspot data from backend
+   */
+  async function loadLiveHotspots() {
+    const data = await apiFetch('/hotspots');
+    if (data && Array.isArray(data)) {
+      HOTSPOTS = data;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 從後端載入即時預報資料
+   * Load live forecast data from backend
+   */
+  async function loadLiveForecast() {
+    const data = await apiFetch('/forecast');
+    if (data && Array.isArray(data)) {
+      FORECAST_DATA = data;
+      buildForecast(); // 重新渲染預報面板
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 從後端載入即時交通資料並更新交通面板
+   * Load live transport data and update transport panel
+   */
+  async function loadLiveTransport() {
+    const [flights, ferries, alerts] = await Promise.all([
+      apiFetch('/transport/flights'),
+      apiFetch('/transport/ferries'),
+      apiFetch('/transport/alerts')
+    ]);
+    if (flights || ferries || alerts) {
+      updateTransportPanel(flights, ferries, alerts);
+    }
+  }
+
+  /**
+   * 更新交通面板的即時資料（含停航警示）
+   * Update transport panel with live data (including cancellation alerts)
+   */
+  function updateTransportPanel(flights, ferries, alerts) {
+    // 如果有停航警示，在交通面板頂部顯示
+    if (alerts && alerts.length > 0) {
+      var alertsHtml = '<div style="background:rgba(255,80,80,0.15);border:1px solid rgba(255,80,80,0.3);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px;">';
+      alertsHtml += '<div style="color:#FF5050;font-weight:600;font-size:12px;margin-bottom:4px;">⚠️ 停航/延誤警示</div>';
+      alerts.forEach(function(alert) {
+        alertsHtml += '<div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">' + alert.message + '</div>';
+      });
+      alertsHtml += '</div>';
+      var transportBody = document.querySelector('#panelTransport .panel-overlay__body');
+      if (transportBody) {
+        var existingAlert = transportBody.querySelector('.transport-alert');
+        if (existingAlert) existingAlert.remove();
+        var alertEl = document.createElement('div');
+        alertEl.className = 'transport-alert';
+        alertEl.innerHTML = alertsHtml;
+        transportBody.insertBefore(alertEl, transportBody.firstChild);
+      }
+    }
+    // 未來可進一步替換航班/船班 DOM 為即時資料
+  }
+
+  /**
+   * 更新狀態列的天氣與時間資料
+   * Update status bar with live weather data
+   */
+  async function updateStatusBar() {
+    const weather = await apiFetch('/weather');
+    if (weather) {
+      var tempEl = document.querySelector('.weather-strip__temp');
+      if (tempEl && weather.temperature) tempEl.textContent = weather.temperature + '°C';
+      var updateEl = document.getElementById('updateTime');
+      if (updateEl) updateEl.textContent = '即時更新 ' + new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+    }
+  }
+
+  // ===== Map Initialization =====
+  let map;
+  let activePopup = null;
+
+  function initMap() {
+    map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://tiles.openfreemap.org/styles/positron',
+      center: [119.95, 26.16],
+      zoom: 11,
+      minZoom: 9,
+      maxZoom: 16,
+      attributionControl: false
+    });
+
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+
+    map.on('load', function() {
+      // Darken the map tiles
+      map.setPaintProperty('background', 'background-color', '#0A1628');
+
+      // Add markers
+      HOTSPOTS.forEach(function(spot) {
+        addMarker(spot);
+      });
+    });
+  }
+
+  function addMarker(spot) {
+    // [Bug Fix] 雙層 div 結構：外層 wrapper 交由 MapLibre 控制定位 transform
+    // 內層 inner 承載所有 CSS 動畫和視覺樣式，避免 transform 衝突導致縮放漂移
+    var wrapper = document.createElement('div');
+    wrapper.className = 'marker-hotspot-wrapper';
+    wrapper.setAttribute('role', 'button');
+    wrapper.setAttribute('aria-label', spot.nameZh + ' ' + spot.nameEn + ' - 強度: ' + getIntensityLabel(spot.intensity));
+    wrapper.setAttribute('tabindex', '0');
+
+    var inner = document.createElement('div');
+    inner.className = 'marker-hotspot marker-hotspot--' + spot.intensity;
+    inner.innerHTML =
+      '<div class="marker-hotspot__pulse"></div>' +
+      '<div class="marker-hotspot__core"></div>';
+
+    wrapper.appendChild(inner);
+
+    wrapper.addEventListener('click', function(e) {
+      e.stopPropagation();
+      showPopup(spot);
+    });
+    wrapper.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        showPopup(spot);
+      }
+    });
+
+    // anchor: 'center' 讓 wrapper 的中心點對齊經緯度座標
+    new maplibregl.Marker({ element: wrapper, anchor: 'center' })
+      .setLngLat([spot.lng, spot.lat])
+      .addTo(map);
+  }
+
+  function getIntensityLabel(intensity) {
+    var labels = { high: '高', medium: '中', low: '低' };
+    return labels[intensity] || intensity;
+  }
+
+  function getIntensityClass(intensity) {
+    return 'popup-card__intensity--' + intensity;
+  }
+
+  function showPopup(spot) {
+    if (activePopup) activePopup.remove();
+
+    var html =
+      '<div class="popup-card">' +
+        '<div class="popup-card__header">' +
+          '<div>' +
+            '<div class="popup-card__name-zh">' + spot.nameZh + '</div>' +
+            '<div class="popup-card__name-en">' + spot.nameEn + '</div>' +
+          '</div>' +
+          '<span class="popup-card__intensity ' + getIntensityClass(spot.intensity) + '">' +
+            '<span class="popup-card__intensity-dot"></span>' +
+            getIntensityLabel(spot.intensity) +
+          '</span>' +
+        '</div>' +
+        '<div class="popup-card__details">' +
+          '<div class="popup-card__detail">' +
+            '<div class="popup-card__detail-label">最佳觀賞</div>' +
+            '<div class="popup-card__detail-value">' + spot.viewTime + '</div>' +
+          '</div>' +
+          '<div class="popup-card__detail">' +
+            '<div class="popup-card__detail-label">水溫</div>' +
+            '<div class="popup-card__detail-value">' + spot.waterTemp + '</div>' +
+          '</div>' +
+          '<div class="popup-card__detail">' +
+            '<div class="popup-card__detail-label">風速</div>' +
+            '<div class="popup-card__detail-value">' + spot.wind + '</div>' +
+          '</div>' +
+          '<div class="popup-card__detail">' +
+            '<div class="popup-card__detail-label">潮汐</div>' +
+            '<div class="popup-card__detail-value">' + spot.tide + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="popup-card__actions">' +
+          '<button class="popup-card__btn popup-card__btn--primary" data-action="plan-trip" aria-label="規劃行程">規劃行程</button>' +
+          '<button class="popup-card__btn popup-card__btn--secondary" aria-label="查看詳情">查看詳情</button>' +
+        '</div>' +
+      '</div>';
+
+    activePopup = new maplibregl.Popup({
+      closeButton: true,
+      closeOnClick: false,
+      maxWidth: '300px',
+      offset: 15
+    })
+      .setLngLat([spot.lng, spot.lat])
+      .setHTML(html)
+      .addTo(map);
+
+    // Bind plan trip button
+    setTimeout(function() {
+      var planBtn = document.querySelector('[data-action="plan-trip"]');
+      if (planBtn) {
+        planBtn.addEventListener('click', function() {
+          if (activePopup) activePopup.remove();
+          openPanel('panelStay');
+          setActiveTab('stay');
+        });
+      }
+    }, 50);
+
+    map.flyTo({ center: [spot.lng, spot.lat], zoom: 13, speed: 0.8 });
+  }
+
+  // ===== Panel Management =====
+  var panelMap = {
+    forecast: 'panelForecast',
+    stay: 'panelStay',
+    transport: 'panelTransport',
+    profile: 'panelProfile'
+  };
+
+  function openPanel(panelId) {
+    var panel = document.getElementById(panelId);
+    if (!panel) return;
+    panel.classList.add('active');
+    panel.setAttribute('aria-hidden', 'false');
+  }
+
+  function closePanel(panelId) {
+    var panel = document.getElementById(panelId);
+    if (!panel) return;
+    panel.classList.remove('active');
+    panel.setAttribute('aria-hidden', 'true');
+  }
+
+  function closeAllPanels() {
+    document.querySelectorAll('.panel-overlay').forEach(function(panel) {
+      panel.classList.remove('active');
+      panel.setAttribute('aria-hidden', 'true');
+    });
+  }
+
+  function setActiveTab(tabName) {
+    document.querySelectorAll('.nav-bar__item').forEach(function(item) {
+      var isActive = item.getAttribute('data-tab') === tabName;
+      item.classList.toggle('active', isActive);
+      item.setAttribute('aria-current', isActive ? 'true' : 'false');
+    });
+  }
+
+  // ===== Navigation Handling =====
+  document.querySelectorAll('.nav-bar__item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      var tab = this.getAttribute('data-tab');
+
+      closeAllPanels();
+
+      if (tab === 'map') {
+        setActiveTab('map');
+        return;
+      }
+
+      var panelId = panelMap[tab];
+      if (panelId) {
+        openPanel(panelId);
+        setActiveTab(tab);
+      }
+    });
+  });
+
+  // Close panel buttons and backdrop
+  document.querySelectorAll('[data-close-panel]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var panel = this.closest('.panel-overlay');
+      if (panel) {
+        panel.classList.remove('active');
+        panel.setAttribute('aria-hidden', 'true');
+        setActiveTab('map');
+      }
+    });
+  });
+
+  // ===== Build Forecast =====
+  function buildForecast() {
+    var container = document.getElementById('forecastList');
+    if (!container) return;
+    var html = '';
+    FORECAST_DATA.forEach(function(day) {
+      var scoreColor = day.score >= 70 ? '#00D4FF' : day.score >= 50 ? '#1A8A9E' : '#3A5A6E';
+      html +=
+        '<div class="forecast-day">' +
+          '<div class="forecast-day__date">' +
+            '<div class="forecast-day__weekday">' + day.weekday + '</div>' +
+            '<div class="forecast-day__date-num">' + day.date + '</div>' +
+          '</div>' +
+          '<div class="forecast-day__moon">' + day.moon + '</div>' +
+          '<div class="forecast-day__conditions">' +
+            '<div class="forecast-day__weather">' +
+              '<span>' + day.temp + '</span>' +
+              '<span>' + day.wind + ' km/h</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="forecast-day__score">' +
+            '<div class="forecast-day__score-bar">' +
+              '<div class="forecast-day__score-fill" style="width:' + day.score + '%;background:' + scoreColor + ';box-shadow:0 0 6px ' + scoreColor + ';"></div>' +
+            '</div>' +
+            '<div class="forecast-day__score-value" style="color:' + scoreColor + ';">' + day.score + '</div>' +
+          '</div>' +
+        '</div>';
+    });
+    container.innerHTML = html;
+  }
+
+  // ===== Init =====
+  async function init() {
+    // 1. 先用 Mock 資料立即渲染（零延遲）
+    buildForecast();
+    initMap();
+
+    // 2. 背景偵測後端 API 並嘗試載入即時資料
+    await detectAPI();
+    if (USE_LIVE_API) {
+      console.log('[Init] 後端可用，載入即時資料...');
+      await Promise.all([
+        loadLiveForecast(),
+        loadLiveTransport(),
+        updateStatusBar()
+      ]);
+      // 即時熱點需等地圖載入完成後更新
+      // Live hotspot update requires map to be loaded first
+    }
+
+    // 3. 每 5 分鐘自動更新一次即時資料
+    setInterval(async function() {
+      if (USE_LIVE_API) {
+        await Promise.all([
+          loadLiveForecast(),
+          loadLiveTransport(),
+          updateStatusBar()
+        ]);
+      }
+    }, 5 * 60 * 1000);
+  }
+
+  init();
+
+})();
+</script>
+</body>
+</html>
