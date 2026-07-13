@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>梅石譯境 Meistone — 藍眼淚觀測 Blue Tears</title>
 <meta name="description" content="馬祖藍眼淚即時觀測與住宿預訂 — 梅石譯境 Meistone">
-<link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ===== CSS Custom Properties ===== */
@@ -225,9 +225,8 @@ a { color: inherit; text-decoration: none; }
   height: 100%;
   background: var(--bg-primary);
 }
-.maplibregl-canvas {
-  filter: invert(1) brightness(0.35) contrast(1.2) saturate(0.3) hue-rotate(180deg);
-}
+/* [Fix] 原本以 CSS invert 濾鏡壓暗淺色底圖，導致整張地圖變全黑。
+   已改用 OpenFreeMap 官方 dark 深色底圖，不再需要任何濾鏡。 */
 
 /* Custom map markers — 雙層結構修正 */
 /* 外層 .marker-hotspot-wrapper：交由 MapLibre 控制 transform 定位 */
@@ -1221,7 +1220,7 @@ a.transport-item:hover {
   </nav>
 </div>
 
-<script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
 <script>
 (function() {
   'use strict';
@@ -1306,6 +1305,8 @@ a.transport-item:hover {
         signal: AbortSignal.timeout(8000) // 8 秒超時
       });
       if (!res.ok) throw new Error('HTTP ' + res.status);
+      const ct = res.headers.get('content-type') || '';
+      if (ct.indexOf('json') === -1) throw new Error('非 JSON 回應（Content-Type: ' + ct + '）');
       const data = await res.json();
       return data.data || data;
     } catch (err) {
@@ -1324,7 +1325,9 @@ a.transport-item:hover {
         method: 'HEAD',
         signal: AbortSignal.timeout(3000)
       });
-      USE_LIVE_API = res.ok;
+      // [Fix] 同時驗證 Content-Type，避免 SPA fallback 回傳 HTML 被誤判為後端可用
+      const ct = res.headers.get('content-type') || '';
+      USE_LIVE_API = res.ok && ct.indexOf('json') !== -1;
     } catch {
       USE_LIVE_API = false;
     }
@@ -1420,24 +1423,40 @@ a.transport-item:hover {
   function initMap() {
     map = new maplibregl.Map({
       container: 'map',
-      style: 'https://tiles.openfreemap.org/styles/positron',
+      style: 'https://tiles.openfreemap.org/styles/dark', // [Fix] 官方深色底圖（免金鑰），取代 positron + CSS 濾鏡
       center: [119.95, 26.16],
       zoom: 11,
-      minZoom: 9,
+      minZoom: 8.5,
       maxZoom: 16,
+      maxBounds: [[119.55, 25.75], [120.40, 26.50]], // 限制在馬祖列島範圍
       attributionControl: false
     });
 
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
 
     map.on('load', function() {
-      // Darken the map tiles
-      map.setPaintProperty('background', 'background-color', '#0A1628');
+      // 將底圖水域色調微調為品牌深海藍（失敗時不影響地圖顯示）
+      try {
+        map.getStyle().layers.forEach(function(layer) {
+          if (layer.type === 'fill' && /water/i.test(layer.id)) {
+            map.setPaintProperty(layer.id, 'fill-color', '#0A1628');
+          }
+          // 隱藏海面上的行政邊界線，避免干擾藍眼淚熱點閱讀
+          if (layer.type === 'line' && /boundary|admin/i.test(layer.id)) {
+            map.setLayoutProperty(layer.id, 'visibility', 'none');
+          }
+        });
+      } catch (e) { /* 底圖圖層名稱變動時安全略過 */ }
 
       // Add markers
       HOTSPOTS.forEach(function(spot) {
         addMarker(spot);
       });
+
+      // 初始視野涵蓋全部熱點（南竿、北竿、東莒、西莒）
+      var bounds = new maplibregl.LngLatBounds();
+      HOTSPOTS.forEach(function(spot) { bounds.extend([spot.lng, spot.lat]); });
+      map.fitBounds(bounds, { padding: { top: 60, bottom: 80, left: 40, right: 40 }, duration: 1200 });
     });
   }
 
@@ -1648,6 +1667,39 @@ a.transport-item:hover {
     container.innerHTML = html;
   }
 
+  /**
+   * [Fix] 將狀態列（分數環、溫度、風速、月相、更新時間）與今日預報資料同步
+   * Sync status bar (score ring, temp, wind, moon, update time) with today's forecast
+   */
+  function syncStatusBarWithForecast() {
+    var today = FORECAST_DATA[0];
+    if (!today) return;
+    // 分數環
+    var ring = document.querySelector('.score-ring');
+    var ringFill = document.querySelector('.score-ring__fill');
+    var ringValue = document.querySelector('.score-ring__value');
+    if (ring && ringFill && ringValue) {
+      var score = Math.max(0, Math.min(100, today.score));
+      ringValue.textContent = score;
+      ringFill.style.strokeDashoffset = String(Math.round(126 * (1 - score / 100)));
+      ring.setAttribute('aria-valuenow', String(score));
+      ring.setAttribute('aria-label', '今晚藍眼淚預測分數 ' + score + ' 分');
+    }
+    // 溫度與風速
+    var tempEl = document.querySelector('.weather-strip__temp');
+    if (tempEl && today.temp) tempEl.textContent = today.temp.replace('°', '') + '°C';
+    var windEl = document.querySelector('.weather-strip__row + .weather-strip__row span');
+    if (windEl && today.wind) windEl.textContent = today.wind + ' km/h';
+    // 月相
+    var moonEl = document.querySelector('.weather-strip__row span:nth-child(2)');
+    if (moonEl && today.moon) moonEl.textContent = today.moon;
+    // 更新時間（台灣時區）
+    var updateEl = document.getElementById('updateTime');
+    if (updateEl) {
+      updateEl.textContent = '更新 ' + new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Taipei' });
+    }
+  }
+
   // ===== Init =====
   async function init() {
     // 0. 更新狀態列日期為台灣今天日期 / Update status bar to Taiwan today's date
@@ -1664,6 +1716,7 @@ a.transport-item:hover {
 
     // 1. 先用 Mock 資料立即渲染（零延遲）
     buildForecast();
+    syncStatusBarWithForecast(); // [Fix] 狀態列改為與今日預報資料連動，不再寫死
     initMap();
 
     // 2. 背景偵測後端 API 並嘗試載入即時資料
