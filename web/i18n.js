@@ -107,7 +107,7 @@
       updated: 'Updated {t}',
       mock_short: 'Fallback data',
       badge_live: 'Source: CWA / TDX, updated {t}',
-      badge_model: 'Model estimate \u00b7 live weather not connected',
+      badge_model: 'Model estimate \u00b7 no live weather yet',
       badge_cache: 'Offline cache \u00b7 last updated {t}',
       badge_mock: 'Offline fallback data \u00b7 not live',
       badge_loading: 'Loading\u2026',

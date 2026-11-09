@@ -1236,3 +1236,4 @@ details.me-card[open] > summary .me-row__chev { transform: rotate(180deg); }
 .map-chip[aria-pressed="true"] { background: var(--accent-cyan); color: var(--bg-primary); }
 /* 徽章讓出右側空間給切換按鈕 */
 .data-badge { left: 10px; transform: none; max-width: calc(100% - 120px); }
+@media (max-width: 380px) { .data-badge { font-size: 10px; padding: 4px 9px; max-width: calc(100% - 108px); } }
