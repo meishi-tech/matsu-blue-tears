@@ -1,0 +1,2 @@
+"CFBundleDisplayName" = "Matsu Blue Tears";
+"NSLocationWhenInUseUsageDescription" = "Used to show your distance to each Blue Tears viewing spot. Location is only read while the app is open and is never uploaded or stored.";

@@ -1,0 +1,19 @@
+{
+  "name": "馬祖藍眼淚預報",
+  "short_name": "藍眼淚預報",
+  "description": "馬祖藍眼淚指數、七日預報、觀賞熱點地圖、交通與住宿資訊 — 梅石譯境 Meistone",
+  "lang": "zh-Hant",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0A1628",
+  "background_color": "#0A1628",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "categories": ["travel", "weather"]
+}

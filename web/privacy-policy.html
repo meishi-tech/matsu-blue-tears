@@ -31,13 +31,13 @@
 <body>
 
 <div class="lang-switch">
-  <a href="#zh">繁體中文</a> · <a href="#en">English</a>
+  <a href="index.html" onclick="if (history.length > 1) { history.back(); return false; }">← 返回 App / Back to App</a> &nbsp;|&nbsp; <a href="#zh">繁體中文</a> · <a href="#en">English</a>
 </div>
 
 <!-- ═══════════════ 繁體中文版 ═══════════════ -->
 <section id="zh">
 <h1>隱私權政策</h1>
-<p class="meta">最後更新日期：2026 年 5 月 11 日<br>
+<p class="meta">最後更新日期：2026 年 11 月 9 日<br>
 適用 App：馬祖藍眼淚預報<br>
 開發者：梅石科技 / 大梅石創生共享家</p>
 
@@ -66,9 +66,12 @@
     <tr><td>App 版本、語系設定</td><td>用於顯示對應語言介面</td><td>否（系統自動）</td></tr>
     <tr><td>當機/錯誤日誌</td><td>用於問題排查與修復</td><td>否（系統自動）</td></tr>
     <tr><td>地圖瀏覽位置（非 GPS）</td><td>顯示馬祖預設地圖視角</td><td>否（無 GPS 追蹤）</td></tr>
+    <tr><td>裝置定位（GPS，僅在你點選「定位我」時）</td><td>計算並顯示距離你最近的觀賞熱點</td><td>是（可拒絕；僅於裝置端計算，不上傳）</td></tr>
+    <tr><td>通知權限（僅在你開啟「觀賞提醒」時）</td><td>於今晚最佳觀賞時段前在本機發送提醒</td><td>是（可隨時關閉）</td></tr>
   </tbody>
 </table>
-<p>我們<strong>不會</strong>請求或讀取你的精確 GPS 位置資料。本 App 顯示的地圖預設定位於馬祖列島，不會追蹤你的實際位置。</p>
+<p>本 App 預設<strong>不會</strong>讀取你的位置。只有在你主動點選地圖上的「定位我」按鈕時，才會透過系統定位權限取得一次目前位置，用於在裝置端計算與最近觀賞熱點的距離；位置資料<strong>不會</strong>上傳至我們的伺服器，也不會被儲存或用於追蹤。你可隨時在系統設定中撤銷定位權限。</p>
+<p>「觀賞提醒」功能使用裝置的本機通知（Local Notification）或瀏覽器通知 API，排程完全在你的裝置上執行，我們不會取得你的推播權杖或任何通知內容。</p>
 
 <h2>3. 第三方服務</h2>
 <p>本 App 為提供完整功能，會連結至以下第三方服務：</p>
@@ -77,12 +80,13 @@
     <tr><th>服務名稱</th><th>用途</th><th>連結</th></tr>
   </thead>
   <tbody>
-    <tr><td>OpenStreetMap / MapLibre</td><td>地圖底圖供應</td><td><a href="https://www.openstreetmap.org/copyright" target="_blank">隱私政策</a></td></tr>
+    <tr><td>OpenFreeMap / OpenStreetMap / MapLibre</td><td>地圖底圖供應（載入圖磚時你的 IP 位址會傳送至圖磚伺服器）</td><td><a href="https://www.openstreetmap.org/copyright" target="_blank">隱私政策</a></td></tr>
     <tr><td>交通部 TDX 運輸資料流通服務</td><td>航班與船班即時查詢</td><td><a href="https://tdx.transportdata.tw/" target="_blank">隱私政策</a></td></tr>
     <tr><td>中央氣象署 CWA 開放資料</td><td>氣象與海象資訊</td><td><a href="https://www.cwa.gov.tw/V8/C/private.html" target="_blank">隱私政策</a></td></tr>
     <tr><td>立榮航空（UNI Air）</td><td>航班訂位導向（外部開啟）</td><td><a href="https://www.uniair.com.tw/" target="_blank">隱私政策</a></td></tr>
     <tr><td>馬祖海上交通訂位系統</td><td>船班訂位導向（外部開啟）</td><td><a href="https://www.matsuebs.com/" target="_blank">隱私政策</a></td></tr>
     <tr><td>梅石軍官茶室官方訂房 (matsu.live)</td><td>住宿訂房導向（外部開啟）</td><td><a href="https://matsu.live/" target="_blank">隱私政策</a></td></tr>
+    <tr><td>Google 地圖</td><td>「導航」至觀賞熱點（外部開啟）</td><td><a href="https://policies.google.com/privacy" target="_blank">隱私政策</a></td></tr>
   </tbody>
 </table>
 <p>當你點選 App 內的訂票或訂房連結時，會在外部瀏覽器或對應 App 中開啟該第三方服務，屆時將適用該第三方的隱私權政策，我們不負責其資料蒐集行為。</p>
@@ -90,9 +94,9 @@
 <h2>4. Cookies 與本機儲存</h2>
 <p>本 App 可能使用本機儲存（Local Storage）暫存以下資料以提升使用體驗：</p>
 <ul>
-  <li>使用者偏好設定（如語言、主題）</li>
-  <li>已讀取的預報資料快取（24 小時內）</li>
-  <li>最近瀏覽的景點清單</li>
+  <li>使用者偏好設定（語言、觀賞提醒開關與時間）</li>
+  <li>最後一次成功取得的預報／交通資料（供離線顯示）</li>
+  <li>你收藏的觀賞景點清單</li>
 </ul>
 <p>這些資料僅儲存於你的裝置，不會上傳至我們的伺服器。你可在 App 設定或裝置系統設定中清除這些資料。</p>
 
@@ -119,7 +123,7 @@
 <!-- ═══════════════ English Version ═══════════════ -->
 <section id="en">
 <h1>Privacy Policy</h1>
-<p class="meta">Last updated: May 11, 2026<br>
+<p class="meta">Last updated: November 9, 2026<br>
 Applies to: Matsu Blue Tears Forecast App<br>
 Developer: Meishi Tech / Da Mei Shi Co-Living</p>
 
@@ -148,9 +152,12 @@ Developer: Meishi Tech / Da Mei Shi Co-Living</p>
     <tr><td>App version, locale</td><td>Display appropriate language</td><td>No (system auto)</td></tr>
     <tr><td>Crash/error logs</td><td>Issue diagnosis and bug fixing</td><td>No (system auto)</td></tr>
     <tr><td>Map viewport (not GPS)</td><td>Display default Matsu map view</td><td>No (no GPS tracking)</td></tr>
+    <tr><td>Device location (GPS, only when you tap “Locate me”)</td><td>Calculate and show the nearest viewing hotspots</td><td>Yes (may be declined; computed on-device, never uploaded)</td></tr>
+    <tr><td>Notification permission (only when you enable the viewing reminder)</td><td>Local reminder before tonight’s best viewing window</td><td>Yes (can be turned off any time)</td></tr>
   </tbody>
 </table>
-<p>We do <strong>NOT</strong> request or read your precise GPS location. The map displayed in the App is centered on the Matsu Islands by default and does not track your actual location.</p>
+<p>By default the App does <strong>not</strong> read your location. Only when you tap the “Locate me” button on the map does it request your current position once through the system location permission, to calculate the distance to the nearest viewing hotspots on your device. Location data is <strong>never</strong> uploaded to our servers, stored, or used for tracking. You may revoke the permission in system settings at any time.</p>
+<p>The viewing reminder uses the device’s local notifications or the browser Notification API; scheduling happens entirely on your device, and we never receive push tokens or notification content.</p>
 
 <h2>3. Third-party Services</h2>
 <p>To provide full functionality, the App links to the following third-party services:</p>
@@ -159,12 +166,13 @@ Developer: Meishi Tech / Da Mei Shi Co-Living</p>
     <tr><th>Service</th><th>Purpose</th><th>Link</th></tr>
   </thead>
   <tbody>
-    <tr><td>OpenStreetMap / MapLibre</td><td>Base map tiles</td><td><a href="https://www.openstreetmap.org/copyright" target="_blank">Privacy Policy</a></td></tr>
+    <tr><td>OpenFreeMap / OpenStreetMap / MapLibre</td><td>Base map tiles (your IP address is sent to the tile server when loading tiles)</td><td><a href="https://www.openstreetmap.org/copyright" target="_blank">Privacy Policy</a></td></tr>
     <tr><td>MOTC TDX Transport Data Exchange</td><td>Flight and ferry queries</td><td><a href="https://tdx.transportdata.tw/" target="_blank">Privacy Policy</a></td></tr>
     <tr><td>CWA Open Data (Taiwan Weather)</td><td>Weather and ocean info</td><td><a href="https://www.cwa.gov.tw/" target="_blank">Privacy Policy</a></td></tr>
     <tr><td>UNI Air</td><td>Flight booking redirect</td><td><a href="https://www.uniair.com.tw/" target="_blank">Privacy Policy</a></td></tr>
     <tr><td>Matsu Ebs Ferry Booking System</td><td>Ferry booking redirect</td><td><a href="https://www.matsuebs.com/" target="_blank">Privacy Policy</a></td></tr>
     <tr><td>Meishi Officer Tearoom (matsu.live)</td><td>Accommodation booking redirect</td><td><a href="https://matsu.live/" target="_blank">Privacy Policy</a></td></tr>
+    <tr><td>Google Maps</td><td>“Navigate” to a hotspot (opens externally)</td><td><a href="https://policies.google.com/privacy" target="_blank">Privacy Policy</a></td></tr>
   </tbody>
 </table>
 <p>When you tap a booking link inside the App, it opens in your external browser or the corresponding native app. The third party's privacy policy will then apply. We are not responsible for their data collection practices.</p>
@@ -172,9 +180,9 @@ Developer: Meishi Tech / Da Mei Shi Co-Living</p>
 <h2>4. Cookies and Local Storage</h2>
 <p>The App may use local storage to cache the following data to improve user experience:</p>
 <ul>
-  <li>User preferences (language, theme)</li>
-  <li>Forecast data cache (within 24 hours)</li>
-  <li>Recently viewed locations list</li>
+  <li>User preferences (language, reminder toggle and time)</li>
+  <li>The last successfully fetched forecast / transport data (for offline display)</li>
+  <li>Your saved viewing spots</li>
 </ul>
 <p>This data is stored only on your device and is not uploaded to our servers. You can clear this data through the App settings or your device's system settings.</p>
 

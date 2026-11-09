@@ -1,0 +1,30 @@
+{
+  "name": "matsu-blue-tears-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "馬祖藍眼淚預報 — Capacitor 原生殼（iOS / Android）",
+  "scripts": {
+    "sync:web": "node scripts/sync-web.mjs",
+    "sync": "npm run sync:web && npx cap sync",
+    "assets": "npx @capacitor/assets generate --iconBackgroundColor '#0A1628' --iconBackgroundColorDark '#0A1628' --splashBackgroundColor '#0A1628' --splashBackgroundColorDark '#0A1628'",
+    "open:ios": "npx cap open ios",
+    "open:android": "npx cap open android",
+    "build:android": "npm run sync && cd android && ./gradlew bundleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8",
+    "@capacitor/app": "^8",
+    "@capacitor/browser": "^8",
+    "@capacitor/core": "^8",
+    "@capacitor/geolocation": "^8",
+    "@capacitor/ios": "^8",
+    "@capacitor/local-notifications": "^8",
+    "@capacitor/splash-screen": "^8",
+    "@capacitor/status-bar": "^8"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3",
+    "@capacitor/cli": "^8",
+    "typescript": "^7.0.2"
+  }
+}

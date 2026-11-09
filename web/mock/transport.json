@@ -1,0 +1,168 @@
+{
+  "ok": true,
+  "generatedAt": "2026-11-09T09:00:00+08:00",
+  "sources": {
+    "cwa": {
+      "status": "not_configured",
+      "fetchedAt": null,
+      "datasets": [
+        "F-D0047-083",
+        "F-A0021-001"
+      ]
+    },
+    "tdx": {
+      "status": "not_configured",
+      "fetchedAt": null
+    },
+    "astro": {
+      "status": "computed"
+    }
+  },
+  "mode": "model",
+  "flights": [
+    {
+      "id": "B7-8701",
+      "airline": "立榮航空",
+      "airlineEn": "UNI AIR",
+      "flightNo": "B78701",
+      "from": "TSA",
+      "fromZh": "台北松山",
+      "to": "LZN",
+      "toZh": "南竿",
+      "scheduled": "2026-11-09T07:50:00+08:00",
+      "estimated": null,
+      "status": "unknown",
+      "statusZh": "依業者公告",
+      "statusEn": "See operator",
+      "bookingUrl": "https://www.uniair.com.tw/rwd/B2C/booking/ubk_search.aspx"
+    },
+    {
+      "id": "B7-8703",
+      "airline": "立榮航空",
+      "airlineEn": "UNI AIR",
+      "flightNo": "B78703",
+      "from": "TSA",
+      "fromZh": "台北松山",
+      "to": "LZN",
+      "toZh": "南竿",
+      "scheduled": "2026-11-09T11:20:00+08:00",
+      "estimated": null,
+      "status": "unknown",
+      "statusZh": "依業者公告",
+      "statusEn": "See operator",
+      "bookingUrl": "https://www.uniair.com.tw/rwd/B2C/booking/ubk_search.aspx"
+    },
+    {
+      "id": "B7-8707",
+      "airline": "立榮航空",
+      "airlineEn": "UNI AIR",
+      "flightNo": "B78707",
+      "from": "TSA",
+      "fromZh": "台北松山",
+      "to": "LZN",
+      "toZh": "南竿",
+      "scheduled": "2026-11-09T15:40:00+08:00",
+      "estimated": null,
+      "status": "unknown",
+      "statusZh": "依業者公告",
+      "statusEn": "See operator",
+      "bookingUrl": "https://www.uniair.com.tw/rwd/B2C/booking/ubk_search.aspx"
+    },
+    {
+      "id": "B7-8771",
+      "airline": "立榮航空",
+      "airlineEn": "UNI AIR",
+      "flightNo": "B78771",
+      "from": "RMQ",
+      "fromZh": "台中清泉崗",
+      "to": "LZN",
+      "toZh": "南竿",
+      "scheduled": "2026-11-09T10:05:00+08:00",
+      "estimated": null,
+      "status": "unknown",
+      "statusZh": "依業者公告",
+      "statusEn": "See operator",
+      "bookingUrl": "https://www.uniair.com.tw/rwd/B2C/booking/ubk_search.aspx"
+    },
+    {
+      "id": "B7-8791",
+      "airline": "立榮航空",
+      "airlineEn": "UNI AIR",
+      "flightNo": "B78791",
+      "from": "TSA",
+      "fromZh": "台北松山",
+      "to": "MFK",
+      "toZh": "北竿",
+      "scheduled": "2026-11-09T08:30:00+08:00",
+      "estimated": null,
+      "status": "unknown",
+      "statusZh": "依業者公告",
+      "statusEn": "See operator",
+      "bookingUrl": "https://www.uniair.com.tw/rwd/B2C/booking/ubk_search.aspx"
+    }
+  ],
+  "ferries": [
+    {
+      "id": "taima-kl-nangan",
+      "routeZh": "基隆 → 南竿（臺馬之星）",
+      "routeEn": "Keelung → Nangan (Taima Star)",
+      "operatorZh": "新華航業",
+      "scheduled": "2026-11-09T21:50:00+08:00",
+      "status": "unknown",
+      "statusZh": "依業者公告",
+      "statusEn": "See operator",
+      "bookingUrl": "https://www.matsuebs.com/home/SelectShip"
+    },
+    {
+      "id": "taima-nangan-kl",
+      "routeZh": "南竿 → 基隆（臺馬之星）",
+      "routeEn": "Nangan → Keelung (Taima Star)",
+      "operatorZh": "新華航業",
+      "scheduled": "2026-11-09T09:30:00+08:00",
+      "status": "unknown",
+      "statusZh": "依業者公告",
+      "statusEn": "See operator",
+      "bookingUrl": "https://www.matsuebs.com/home/SelectShip"
+    }
+  ],
+  "interIsland": [
+    {
+      "routeZh": "南竿 ↔ 北竿",
+      "routeEn": "Nangan ↔ Beigan",
+      "firstDeparture": "07:00",
+      "lastDeparture": "17:10",
+      "frequencyZh": "每日 10 班",
+      "frequencyEn": "10 sailings daily",
+      "durationMin": 15,
+      "priceNtd": 160,
+      "bookingUrl": "https://www.matsuebs.com/home/SelectShip"
+    },
+    {
+      "routeZh": "南竿 → 東莒 / 西莒",
+      "routeEn": "Nangan → Dongju / Xiju",
+      "firstDeparture": "07:00",
+      "lastDeparture": "14:30",
+      "frequencyZh": "每日 2 班",
+      "frequencyEn": "2 sailings daily",
+      "durationMin": 50,
+      "priceNtd": 200,
+      "bookingUrl": "https://www.matsuebs.com/home/SelectShip"
+    },
+    {
+      "routeZh": "南竿 → 東引",
+      "routeEn": "Nangan → Dongyin",
+      "firstDeparture": "09:30",
+      "lastDeparture": "09:30",
+      "frequencyZh": "每日 1 班（臺馬之星）",
+      "frequencyEn": "1 sailing daily (Taima Star)",
+      "durationMin": 120,
+      "priceNtd": 350,
+      "bookingUrl": "https://www.matsuebs.com/home/SelectShip"
+    }
+  ],
+  "alerts": [],
+  "staticNotice": {
+    "zh": "航班／船班以業者公告為準，濃霧季（3-5 月）停航頻繁。",
+    "en": "Flights and ferries are subject to operator notices; fog season (Mar–May) brings frequent cancellations."
+  }
+}

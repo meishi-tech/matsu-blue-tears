@@ -1,0 +1,10 @@
+mobile/
+store/
+resources/
+docs/
+tests/
+.github/
+node_modules/
+.env*
+!.env.example
+README.md

@@ -1,0 +1,15 @@
+{
+  "name": "matsu-blue-tears",
+  "version": "1.0.0",
+  "private": true,
+  "description": "馬祖藍眼淚預報 — 靜態前端（web/）+ Vercel Serverless API（api/v1）",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "test": "node --test tests/"
+  },
+  "dependencies": {}
+}

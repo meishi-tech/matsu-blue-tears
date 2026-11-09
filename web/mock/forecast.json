@@ -1,0 +1,444 @@
+{
+  "ok": true,
+  "generatedAt": "2026-11-09T09:00:00+08:00",
+  "sources": {
+    "cwa": {
+      "status": "not_configured",
+      "fetchedAt": null,
+      "datasets": [
+        "F-D0047-083",
+        "F-A0021-001"
+      ]
+    },
+    "tdx": {
+      "status": "not_configured",
+      "fetchedAt": null
+    },
+    "astro": {
+      "status": "computed"
+    }
+  },
+  "mode": "model",
+  "days": [
+    {
+      "date": "2026-11-09",
+      "weekdayZh": "今天",
+      "weekdayEn": "Today",
+      "score": 38,
+      "level": "low",
+      "moon": {
+        "phase": 0.73,
+        "illumination": 0.68,
+        "emoji": "🌖",
+        "nameZh": "虧凸月",
+        "nameEn": "Waning Gibbous"
+      },
+      "tempMinC": 17,
+      "tempMaxC": 21,
+      "windDir": "NE",
+      "windKmh": 18,
+      "wxZh": "多雲",
+      "wxEn": "Cloudy",
+      "pop": 20,
+      "sunset": "2026-11-09T17:12:00+08:00",
+      "moonrise": "2026-11-09T20:10:00+08:00",
+      "moonset": "2026-11-09T09:40:00+08:00",
+      "bestWindow": {
+        "start": "2026-11-09T18:00:00+08:00",
+        "end": "2026-11-09T20:30:00+08:00",
+        "reasonZh": "日落後至月出前最暗",
+        "reasonEn": "Darkest between sunset and moonrise"
+      },
+      "tides": [
+        {
+          "time": "2026-11-09T05:10:00+08:00",
+          "type": "乾潮",
+          "heightCm": 60
+        },
+        {
+          "time": "2026-11-09T11:20:00+08:00",
+          "type": "滿潮",
+          "heightCm": 229
+        },
+        {
+          "time": "2026-11-09T17:40:00+08:00",
+          "type": "乾潮",
+          "heightCm": 70
+        },
+        {
+          "time": "2026-11-09T23:30:00+08:00",
+          "type": "滿潮",
+          "heightCm": 210
+        }
+      ],
+      "factors": {
+        "season": 10,
+        "moon": 32,
+        "wind": 40,
+        "sky": 74,
+        "seaTemp": 60,
+        "tide": 50
+      }
+    },
+    {
+      "date": "2026-11-10",
+      "weekdayZh": "週二",
+      "weekdayEn": "Tue",
+      "score": 41,
+      "level": "medium",
+      "moon": {
+        "phase": 0.76,
+        "illumination": 0.58,
+        "emoji": "🌖",
+        "nameZh": "虧凸月",
+        "nameEn": "Waning Gibbous"
+      },
+      "tempMinC": 18,
+      "tempMaxC": 22,
+      "windDir": "NE",
+      "windKmh": 22,
+      "wxZh": "多雲時晴",
+      "wxEn": "Partly cloudy",
+      "pop": 10,
+      "sunset": "2026-11-10T17:11:00+08:00",
+      "moonrise": "2026-11-10T21:35:00+08:00",
+      "moonset": "2026-11-10T10:40:00+08:00",
+      "bestWindow": {
+        "start": "2026-11-10T18:00:00+08:00",
+        "end": "2026-11-10T21:00:00+08:00",
+        "reasonZh": "日落後至月出前最暗",
+        "reasonEn": "Darkest between sunset and moonrise"
+      },
+      "tides": [
+        {
+          "time": "2026-11-10T05:30:00+08:00",
+          "type": "乾潮",
+          "heightCm": 65
+        },
+        {
+          "time": "2026-11-10T11:27:00+08:00",
+          "type": "滿潮",
+          "heightCm": 223
+        },
+        {
+          "time": "2026-11-10T17:43:00+08:00",
+          "type": "乾潮",
+          "heightCm": 74
+        },
+        {
+          "time": "2026-11-10T23:35:00+08:00",
+          "type": "滿潮",
+          "heightCm": 205
+        }
+      ],
+      "factors": {
+        "season": 10,
+        "moon": 42,
+        "wind": 40,
+        "sky": 87,
+        "seaTemp": 60,
+        "tide": 100
+      }
+    },
+    {
+      "date": "2026-11-11",
+      "weekdayZh": "週三",
+      "weekdayEn": "Wed",
+      "score": 46,
+      "level": "medium",
+      "moon": {
+        "phase": 0.8,
+        "illumination": 0.47,
+        "emoji": "🌗",
+        "nameZh": "下弦月",
+        "nameEn": "Last Quarter"
+      },
+      "tempMinC": 19,
+      "tempMaxC": 23,
+      "windDir": "N",
+      "windKmh": 15,
+      "wxZh": "晴",
+      "wxEn": "Clear",
+      "pop": 0,
+      "sunset": "2026-11-11T17:10:00+08:00",
+      "moonrise": "2026-11-11T22:60:00+08:00",
+      "moonset": "2026-11-11T11:40:00+08:00",
+      "bestWindow": {
+        "start": "2026-11-11T18:00:00+08:00",
+        "end": "2026-11-11T22:00:00+08:00",
+        "reasonZh": "日落後至月出前最暗",
+        "reasonEn": "Darkest between sunset and moonrise"
+      },
+      "tides": [
+        {
+          "time": "2026-11-11T05:50:00+08:00",
+          "type": "乾潮",
+          "heightCm": 70
+        },
+        {
+          "time": "2026-11-11T11:34:00+08:00",
+          "type": "滿潮",
+          "heightCm": 217
+        },
+        {
+          "time": "2026-11-11T17:46:00+08:00",
+          "type": "乾潮",
+          "heightCm": 78
+        },
+        {
+          "time": "2026-11-11T23:40:00+08:00",
+          "type": "滿潮",
+          "heightCm": 200
+        }
+      ],
+      "factors": {
+        "season": 10,
+        "moon": 53,
+        "wind": 40,
+        "sky": 100,
+        "seaTemp": 60,
+        "tide": 50
+      }
+    },
+    {
+      "date": "2026-11-12",
+      "weekdayZh": "週四",
+      "weekdayEn": "Thu",
+      "score": 44,
+      "level": "medium",
+      "moon": {
+        "phase": 0.83,
+        "illumination": 0.37,
+        "emoji": "🌘",
+        "nameZh": "殘月",
+        "nameEn": "Waning Crescent"
+      },
+      "tempMinC": 17,
+      "tempMaxC": 21,
+      "windDir": "NE",
+      "windKmh": 12,
+      "wxZh": "多雲",
+      "wxEn": "Cloudy",
+      "pop": 20,
+      "sunset": "2026-11-12T17:09:00+08:00",
+      "moonrise": null,
+      "moonset": "2026-11-12T12:40:00+08:00",
+      "bestWindow": {
+        "start": "2026-11-12T18:00:00+08:00",
+        "end": "2026-11-12T23:30:00+08:00",
+        "reasonZh": "月光微弱，入夜後皆適合",
+        "reasonEn": "Faint moonlight; any time after dusk works"
+      },
+      "tides": [
+        {
+          "time": "2026-11-12T05:10:00+08:00",
+          "type": "乾潮",
+          "heightCm": 75
+        },
+        {
+          "time": "2026-11-12T11:41:00+08:00",
+          "type": "滿潮",
+          "heightCm": 211
+        },
+        {
+          "time": "2026-11-12T17:49:00+08:00",
+          "type": "乾潮",
+          "heightCm": 82
+        },
+        {
+          "time": "2026-11-12T23:45:00+08:00",
+          "type": "滿潮",
+          "heightCm": 195
+        }
+      ],
+      "factors": {
+        "season": 10,
+        "moon": 63,
+        "wind": 40,
+        "sky": 74,
+        "seaTemp": 60,
+        "tide": 100
+      }
+    },
+    {
+      "date": "2026-11-13",
+      "weekdayZh": "週五",
+      "weekdayEn": "Fri",
+      "score": 31,
+      "level": "low",
+      "moon": {
+        "phase": 0.86,
+        "illumination": 0.27,
+        "emoji": "🌘",
+        "nameZh": "殘月",
+        "nameEn": "Waning Crescent"
+      },
+      "tempMinC": 18,
+      "tempMaxC": 22,
+      "windDir": "E",
+      "windKmh": 20,
+      "wxZh": "陰短暫雨",
+      "wxEn": "Overcast, brief showers",
+      "pop": 60,
+      "sunset": "2026-11-13T17:08:00+08:00",
+      "moonrise": null,
+      "moonset": "2026-11-13T13:40:00+08:00",
+      "bestWindow": {
+        "start": "2026-11-13T18:00:00+08:00",
+        "end": "2026-11-13T23:30:00+08:00",
+        "reasonZh": "月光微弱，入夜後皆適合",
+        "reasonEn": "Faint moonlight; any time after dusk works"
+      },
+      "tides": [
+        {
+          "time": "2026-11-13T05:30:00+08:00",
+          "type": "乾潮",
+          "heightCm": 80
+        },
+        {
+          "time": "2026-11-13T11:48:00+08:00",
+          "type": "滿潮",
+          "heightCm": 205
+        },
+        {
+          "time": "2026-11-13T17:52:00+08:00",
+          "type": "乾潮",
+          "heightCm": 86
+        },
+        {
+          "time": "2026-11-13T23:50:00+08:00",
+          "type": "滿潮",
+          "heightCm": 190
+        }
+      ],
+      "factors": {
+        "season": 10,
+        "moon": 73,
+        "wind": 40,
+        "sky": 20,
+        "seaTemp": 60,
+        "tide": 50
+      }
+    },
+    {
+      "date": "2026-11-14",
+      "weekdayZh": "週六",
+      "weekdayEn": "Sat",
+      "score": 33,
+      "level": "low",
+      "moon": {
+        "phase": 0.9,
+        "illumination": 0.17,
+        "emoji": "🌘",
+        "nameZh": "殘月",
+        "nameEn": "Waning Crescent"
+      },
+      "tempMinC": 19,
+      "tempMaxC": 23,
+      "windDir": "NE",
+      "windKmh": 26,
+      "wxZh": "多雲",
+      "wxEn": "Cloudy",
+      "pop": 30,
+      "sunset": "2026-11-14T17:07:00+08:00",
+      "moonrise": null,
+      "moonset": "2026-11-14T14:40:00+08:00",
+      "bestWindow": {
+        "start": "2026-11-14T18:00:00+08:00",
+        "end": "2026-11-14T23:30:00+08:00",
+        "reasonZh": "月光微弱，入夜後皆適合",
+        "reasonEn": "Faint moonlight; any time after dusk works"
+      },
+      "tides": [
+        {
+          "time": "2026-11-14T05:50:00+08:00",
+          "type": "乾潮",
+          "heightCm": 85
+        },
+        {
+          "time": "2026-11-14T11:55:00+08:00",
+          "type": "滿潮",
+          "heightCm": 199
+        },
+        {
+          "time": "2026-11-14T17:55:00+08:00",
+          "type": "乾潮",
+          "heightCm": 90
+        },
+        {
+          "time": "2026-11-14T23:55:00+08:00",
+          "type": "滿潮",
+          "heightCm": 185
+        }
+      ],
+      "factors": {
+        "season": 10,
+        "moon": 83,
+        "wind": 40,
+        "sky": 61,
+        "seaTemp": 60,
+        "tide": 100
+      }
+    },
+    {
+      "date": "2026-11-15",
+      "weekdayZh": "週日",
+      "weekdayEn": "Sun",
+      "score": 42,
+      "level": "medium",
+      "moon": {
+        "phase": 0.93,
+        "illumination": 0.09,
+        "emoji": "🌘",
+        "nameZh": "殘月",
+        "nameEn": "Waning Crescent"
+      },
+      "tempMinC": 17,
+      "tempMaxC": 21,
+      "windDir": "N",
+      "windKmh": 14,
+      "wxZh": "晴時多雲",
+      "wxEn": "Mostly clear",
+      "pop": 10,
+      "sunset": "2026-11-15T17:06:00+08:00",
+      "moonrise": null,
+      "moonset": "2026-11-15T15:40:00+08:00",
+      "bestWindow": {
+        "start": "2026-11-15T18:00:00+08:00",
+        "end": "2026-11-15T23:30:00+08:00",
+        "reasonZh": "月光微弱，入夜後皆適合",
+        "reasonEn": "Faint moonlight; any time after dusk works"
+      },
+      "tides": [
+        {
+          "time": "2026-11-15T05:10:00+08:00",
+          "type": "乾潮",
+          "heightCm": 90
+        },
+        {
+          "time": "2026-11-15T11:22:00+08:00",
+          "type": "滿潮",
+          "heightCm": 193
+        },
+        {
+          "time": "2026-11-15T17:58:00+08:00",
+          "type": "乾潮",
+          "heightCm": 94
+        },
+        {
+          "time": "2026-11-15T23:31:00+08:00",
+          "type": "滿潮",
+          "heightCm": 180
+        }
+      ],
+      "factors": {
+        "season": 10,
+        "moon": 91,
+        "wind": 40,
+        "sky": 87,
+        "seaTemp": 60,
+        "tide": 50
+      }
+    }
+  ]
+}

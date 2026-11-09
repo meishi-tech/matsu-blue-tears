@@ -1,0 +1,34 @@
+{
+  "UpdateTime": "2026-11-09T08:00:00+08:00",
+  "UpdateInterval": 600,
+  "SrcUpdateTime": "2026-11-09T07:58:00+08:00",
+  "AuthorityCode": "LCG",
+  "Items": [
+    {
+      "ShipDate": "2026-11-09",
+      "PortID": "TWLCNG",
+      "PortName": { "ZhTw": "南竿福澳港", "En": "Nangan Fuao Port" },
+      "DepartureLiveBoards": [
+        {
+          "RouteID": "NG-KEL", "VesselID": "V001", "VesselName": { "Zh_tw": "新臺馬輪", "En": "New Taima" },
+          "ArrivalPortID": "TWKEL", "ArrivalPortName": { "ZhTw": "基隆港", "En": "Keelung Port" },
+          "ScheduledDepartureTime": "2026-11-09T09:30:00+08:00", "ActualDepartureTime": null, "EstimateDepartureTime": null,
+          "DepartureRemark": "準時", "DepartureRemarkEn": "On time", "CancelReason": null, "ChangeNotice": null
+        },
+        {
+          "RouteID": "NG-BG", "VesselID": "V010", "VesselName": { "Zh_tw": "吉順號", "En": "Ji Shun" },
+          "ArrivalPortID": "TWLCBG", "ArrivalPortName": { "ZhTw": "北竿白沙港", "En": "Beigan Baisha Port" },
+          "ScheduledDepartureTime": "2026-11-09T07:00:00+08:00", "ActualDepartureTime": "2026-11-09T07:02:00+08:00", "EstimateDepartureTime": null,
+          "DepartureRemark": "已離港", "DepartureRemarkEn": "Departed", "CancelReason": null, "ChangeNotice": null
+        },
+        {
+          "RouteID": "NG-JG", "VesselID": "V020", "VesselName": { "Zh_tw": "東海明珠", "En": "Donghai Pearl" },
+          "ArrivalPortID": "TWLCDJ", "ArrivalPortName": { "ZhTw": "東莒猛澳港", "En": "Dongju Mengao Port" },
+          "ScheduledDepartureTime": "2026-11-09T11:00:00+08:00", "ActualDepartureTime": null, "EstimateDepartureTime": null,
+          "DepartureRemark": "停航", "DepartureRemarkEn": "Cancelled", "CancelReason": "風浪過大", "ChangeNotice": null
+        }
+      ],
+      "ArrivalLiveBoards": []
+    }
+  ]
+}

@@ -1,0 +1,491 @@
+{
+ "success": "true",
+ "result": {
+  "resource_id": "F-A0021-001",
+  "fields": [
+   {
+    "id": "LocationName",
+    "type": "String"
+   },
+   {
+    "id": "LocationId",
+    "type": "String"
+   },
+   {
+    "id": "Latitude",
+    "type": "Double"
+   },
+   {
+    "id": "Longitude",
+    "type": "Double"
+   },
+   {
+    "id": "Date",
+    "type": "Date"
+   },
+   {
+    "id": "LunarDate",
+    "type": "Date"
+   },
+   {
+    "id": "TideRange",
+    "type": "String"
+   },
+   {
+    "id": "DateTime",
+    "type": "DateTime"
+   },
+   {
+    "id": "AboveTWVD",
+    "type": "String"
+   },
+   {
+    "id": "AboveLocalMSL",
+    "type": "Integer"
+   },
+   {
+    "id": "AboveChartDatum",
+    "type": "Integer"
+   }
+  ]
+ },
+ "records": {
+  "dataid": "F-A0021-001",
+  "note": "潮汐預報(未來1個月潮汐預報，鄉鎮、大潮小潮、滿潮乾潮、時間、潮高)",
+  "TideForecasts": [
+   {
+    "Location": {
+     "LocationId": "09007010",
+     "LocationName": "連江縣南竿鄉",
+     "Latitude": "26.16170",
+     "Longitude": "119.94280",
+     "TimePeriods": {
+      "Daily": [
+       {
+        "Date": "2026-11-09",
+        "LunarDate": "2026-10-01",
+        "TideRange": "大",
+        "Time": [
+         {
+          "DateTime": "2026-11-09T04:02:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-306",
+           "AboveLocalMSL": -287,
+           "AboveChartDatum": 89
+          }
+         },
+         {
+          "DateTime": "2026-11-09T10:17:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "262",
+           "AboveLocalMSL": 280,
+           "AboveChartDatum": 657
+          }
+         },
+         {
+          "DateTime": "2026-11-09T16:26:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-219",
+           "AboveLocalMSL": -200,
+           "AboveChartDatum": 176
+          }
+         },
+         {
+          "DateTime": "2026-11-09T22:11:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "231",
+           "AboveLocalMSL": 249,
+           "AboveChartDatum": 626
+          }
+         }
+        ]
+       },
+       {
+        "Date": "2026-11-10",
+        "LunarDate": "2026-10-02",
+        "TideRange": "大",
+        "Time": [
+         {
+          "DateTime": "2026-11-10T04:35:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-311",
+           "AboveLocalMSL": -292,
+           "AboveChartDatum": 84
+          }
+         },
+         {
+          "DateTime": "2026-11-10T10:50:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "260",
+           "AboveLocalMSL": 278,
+           "AboveChartDatum": 655
+          }
+         },
+         {
+          "DateTime": "2026-11-10T17:00:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-207",
+           "AboveLocalMSL": -187,
+           "AboveChartDatum": 189
+          }
+         },
+         {
+          "DateTime": "2026-11-10T22:42:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "223",
+           "AboveLocalMSL": 241,
+           "AboveChartDatum": 618
+          }
+         }
+        ]
+       },
+       {
+        "Date": "2026-11-11",
+        "LunarDate": "2026-10-03",
+        "TideRange": "大",
+        "Time": [
+         {
+          "DateTime": "2026-11-11T05:07:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-309",
+           "AboveLocalMSL": -290,
+           "AboveChartDatum": 86
+          }
+         },
+         {
+          "DateTime": "2026-11-11T11:23:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "252",
+           "AboveLocalMSL": 271,
+           "AboveChartDatum": 648
+          }
+         },
+         {
+          "DateTime": "2026-11-11T17:31:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-193",
+           "AboveLocalMSL": -173,
+           "AboveChartDatum": 203
+          }
+         },
+         {
+          "DateTime": "2026-11-11T23:12:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "212",
+           "AboveLocalMSL": 230,
+           "AboveChartDatum": 607
+          }
+         }
+        ]
+       },
+       {
+        "Date": "2026-11-12",
+        "LunarDate": "2026-10-04",
+        "TideRange": "中",
+        "Time": [
+         {
+          "DateTime": "2026-11-12T05:39:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-301",
+           "AboveLocalMSL": -282,
+           "AboveChartDatum": 94
+          }
+         },
+         {
+          "DateTime": "2026-11-12T11:56:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "241",
+           "AboveLocalMSL": 259,
+           "AboveChartDatum": 636
+          }
+         },
+         {
+          "DateTime": "2026-11-12T18:03:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-178",
+           "AboveLocalMSL": -159,
+           "AboveChartDatum": 217
+          }
+         },
+         {
+          "DateTime": "2026-11-12T23:45:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "199",
+           "AboveLocalMSL": 218,
+           "AboveChartDatum": 595
+          }
+         }
+        ]
+       },
+       {
+        "Date": "2026-11-13",
+        "LunarDate": "2026-10-05",
+        "TideRange": "中",
+        "Time": [
+         {
+          "DateTime": "2026-11-13T06:12:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-287",
+           "AboveLocalMSL": -268,
+           "AboveChartDatum": 108
+          }
+         },
+         {
+          "DateTime": "2026-11-13T12:31:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "225",
+           "AboveLocalMSL": 243,
+           "AboveChartDatum": 620
+          }
+         },
+         {
+          "DateTime": "2026-11-13T18:37:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-162",
+           "AboveLocalMSL": -143,
+           "AboveChartDatum": 233
+          }
+         }
+        ]
+       },
+       {
+        "Date": "2026-11-14",
+        "LunarDate": "2026-10-06",
+        "TideRange": "中",
+        "Time": [
+         {
+          "DateTime": "2026-11-14T00:20:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "183",
+           "AboveLocalMSL": 202,
+           "AboveChartDatum": 579
+          }
+         },
+         {
+          "DateTime": "2026-11-14T06:47:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-267",
+           "AboveLocalMSL": -248,
+           "AboveChartDatum": 128
+          }
+         },
+         {
+          "DateTime": "2026-11-14T13:10:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "206",
+           "AboveLocalMSL": 224,
+           "AboveChartDatum": 601
+          }
+         },
+         {
+          "DateTime": "2026-11-14T19:16:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-145",
+           "AboveLocalMSL": -126,
+           "AboveChartDatum": 250
+          }
+         }
+        ]
+       },
+       {
+        "Date": "2026-11-15",
+        "LunarDate": "2026-10-07",
+        "TideRange": "小",
+        "Time": [
+         {
+          "DateTime": "2026-11-15T01:01:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "163",
+           "AboveLocalMSL": 182,
+           "AboveChartDatum": 559
+          }
+         },
+         {
+          "DateTime": "2026-11-15T07:27:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-242",
+           "AboveLocalMSL": -222,
+           "AboveChartDatum": 154
+          }
+         },
+         {
+          "DateTime": "2026-11-15T13:54:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "185",
+           "AboveLocalMSL": 203,
+           "AboveChartDatum": 580
+          }
+         },
+         {
+          "DateTime": "2026-11-15T20:02:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-129",
+           "AboveLocalMSL": -110,
+           "AboveChartDatum": 266
+          }
+         }
+        ]
+       },
+       {
+        "Date": "2026-11-16",
+        "LunarDate": "2026-10-08",
+        "TideRange": "小",
+        "Time": [
+         {
+          "DateTime": "2026-11-16T01:48:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "142",
+           "AboveLocalMSL": 160,
+           "AboveChartDatum": 537
+          }
+         },
+         {
+          "DateTime": "2026-11-16T08:14:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-214",
+           "AboveLocalMSL": -195,
+           "AboveChartDatum": 181
+          }
+         },
+         {
+          "DateTime": "2026-11-16T14:46:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "166",
+           "AboveLocalMSL": 185,
+           "AboveChartDatum": 562
+          }
+         },
+         {
+          "DateTime": "2026-11-16T20:58:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-118",
+           "AboveLocalMSL": -99,
+           "AboveChartDatum": 277
+          }
+         }
+        ]
+       },
+       {
+        "Date": "2026-11-17",
+        "LunarDate": "2026-10-09",
+        "TideRange": "小",
+        "Time": [
+         {
+          "DateTime": "2026-11-17T02:47:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "123",
+           "AboveLocalMSL": 142,
+           "AboveChartDatum": 519
+          }
+         },
+         {
+          "DateTime": "2026-11-17T09:11:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-189",
+           "AboveLocalMSL": -170,
+           "AboveChartDatum": 206
+          }
+         },
+         {
+          "DateTime": "2026-11-17T15:47:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "156",
+           "AboveLocalMSL": 174,
+           "AboveChartDatum": 551
+          }
+         },
+         {
+          "DateTime": "2026-11-17T22:04:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-119",
+           "AboveLocalMSL": -100,
+           "AboveChartDatum": 276
+          }
+         }
+        ]
+       },
+       {
+        "Date": "2026-11-18",
+        "LunarDate": "2026-10-10",
+        "TideRange": "小",
+        "Time": [
+         {
+          "DateTime": "2026-11-18T03:56:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "115",
+           "AboveLocalMSL": 134,
+           "AboveChartDatum": 511
+          }
+         },
+         {
+          "DateTime": "2026-11-18T10:18:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-175",
+           "AboveLocalMSL": -156,
+           "AboveChartDatum": 220
+          }
+         },
+         {
+          "DateTime": "2026-11-18T16:52:00+08:00",
+          "Tide": "滿潮",
+          "TideHeights": {
+           "AboveTWVD": "158",
+           "AboveLocalMSL": 176,
+           "AboveChartDatum": 553
+          }
+         },
+         {
+          "DateTime": "2026-11-18T23:14:00+08:00",
+          "Tide": "乾潮",
+          "TideHeights": {
+           "AboveTWVD": "-138",
+           "AboveLocalMSL": -119,
+           "AboveChartDatum": 257
+          }
+         }
+        ]
+       }
+      ]
+     }
+    }
+   }
+  ]
+ }
+}

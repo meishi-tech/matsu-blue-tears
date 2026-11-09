@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>馬祖藍眼淚預報 — 梅石譯境 Meistone</title>
+<meta name="description" content="馬祖藍眼淚預報與觀賞地圖：每晚藍眼淚指數、七日預報、觀賞熱點、交通與住宿 — 梅石譯境 Meistone">
+<meta name="theme-color" content="#0A1628">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="藍眼淚預報">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<link rel="stylesheet" href="styles.css">
+<!-- 字型：display=swap，離線或載入失敗時回退系統字型 -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+</head>
+<body>
+<div class="app-shell" id="app">
+  <!-- Status Bar -->
+  <header class="status-bar" role="banner">
+    <div class="status-bar__logo" aria-hidden="true">
+      <svg width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 32 C6 32 12 22 18 26 C24 30 20 18 24 14 C28 10 30 20 36 18 C42 16 42 32 42 32" stroke="#00D4FF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.9"/>
+        <path d="M4 36 C4 36 10 28 16 31 C22 34 26 24 30 28 C34 32 38 26 44 30" stroke="#1A8A9E" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <circle cx="22" cy="16" r="3" fill="#00D4FF" opacity="0.9">
+          <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="2.5;3.5;2.5" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="22" cy="16" r="6" fill="none" stroke="#00D4FF" stroke-width="0.5" opacity="0.3">
+          <animate attributeName="r" values="4;8;4" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.3;0.05;0.3" dur="3s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+    <div class="status-bar__info">
+      <h1 class="status-bar__title" data-i18n="appName">馬祖藍眼淚預報</h1>
+      <div class="status-bar__subtitle">
+        <span class="status-bar__season" id="statusSeason">—</span>
+        <span id="statusDate">—</span>
+      </div>
+    </div>
+    <div class="score-ring" id="scoreRing" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="今晚藍眼淚指數">
+      <svg class="score-ring__svg" width="48" height="48" viewBox="0 0 48 48" aria-hidden="true">
+        <circle class="score-ring__track" cx="24" cy="24" r="20"/>
+        <circle class="score-ring__fill" cx="24" cy="24" r="20" id="scoreRingFill" style="stroke-dashoffset:126"/>
+      </svg>
+      <span class="score-ring__value" id="scoreRingValue">–</span>
+    </div>
+    <div class="weather-strip" id="weatherStrip" aria-live="polite">
+      <div class="weather-strip__row">
+        <span class="weather-strip__temp" id="wxTemp">–</span>
+        <span id="wxMoon" aria-hidden="true"></span>
+      </div>
+      <div class="weather-strip__row"><span id="wxWind">–</span></div>
+      <div class="weather-strip__update" id="updateTime"></div>
+    </div>
+  </header>
+
+  <!-- Map -->
+  <main class="map-container" id="mapContainer">
+    <div id="map" role="region" aria-label="藍眼淚觀測地圖"></div>
+    <div class="data-badge" id="dataBadge" role="status" aria-live="polite" data-i18n="badge_loading">載入中…</div>
+    <button class="map-chip" id="viewAllBtn" type="button" aria-pressed="false" aria-label="顯示全部觀測點" data-i18n="view_all">全部觀測點</button>
+    <button class="map-fab" id="locateBtn" type="button" aria-label="定位我" data-i18n-aria="locate_me">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
+    </button>
+    <div class="nearby-card" id="nearbyCard" role="region" aria-live="polite" aria-label="離你最近的觀賞點"></div>
+    <div class="bio-particles" aria-hidden="true">
+      <div class="bio-particle"></div><div class="bio-particle"></div><div class="bio-particle"></div><div class="bio-particle"></div>
+      <div class="bio-particle"></div><div class="bio-particle"></div><div class="bio-particle"></div><div class="bio-particle"></div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <!-- Forecast Panel -->
+  <div class="panel-overlay" id="panelForecast" role="dialog" aria-modal="false" aria-labelledby="forecastTitle" aria-hidden="true">
+    <div class="panel-overlay__backdrop" data-close-panel></div>
+    <div class="panel-overlay__content">
+      <div class="panel-overlay__handle"><div class="panel-overlay__handle-bar"></div></div>
+      <div class="panel-overlay__header">
+        <h2 class="panel-overlay__title" id="forecastTitle" data-i18n="forecast_title">七日預報</h2>
+        <button class="panel-overlay__close" data-close-panel aria-label="關閉" data-i18n-aria="close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-overlay__body">
+        <div id="forecastNote"></div>
+        <div class="forecast-list" id="forecastList"></div>
+        <div class="panel-source" id="forecastSource"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stay Panel -->
+  <div class="panel-overlay" id="panelStay" role="dialog" aria-modal="false" aria-labelledby="stayTitle" aria-hidden="true">
+    <div class="panel-overlay__backdrop" data-close-panel></div>
+    <div class="panel-overlay__content">
+      <div class="panel-overlay__handle"><div class="panel-overlay__handle-bar"></div></div>
+      <div class="panel-overlay__header">
+        <h2 class="panel-overlay__title" id="stayTitle" data-i18n="stay_title">住宿推薦</h2>
+        <button class="panel-overlay__close" data-close-panel aria-label="關閉" data-i18n-aria="close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-overlay__body">
+        <article class="booking-card">
+          <div class="booking-card__image"><span class="booking-card__image-label" data-i18n="stay1_label">歷史建築 · 海景客房</span></div>
+          <div class="booking-card__body">
+            <h3 class="booking-card__name" data-i18n="stay1_name">歷史建築梅石軍官茶室</h3>
+            <div class="booking-card__rating"><span class="stars" aria-hidden="true">★★★★★</span><span class="booking-card__rating-num">4.9</span></div>
+            <div class="booking-card__price">NT$2,800<span data-i18n="stay_from">/晚起</span><span class="booking-card__price-note" data-i18n="stay_price_note">以官網為準</span></div>
+            <div class="booking-card__tags">
+              <span class="booking-card__tag" data-i18n="stay1_tag1">歷史建築</span>
+              <span class="booking-card__tag" data-i18n="stay1_tag2">海景</span>
+              <span class="booking-card__tag booking-card__tag--highlight" data-i18n="stay1_tag3">藍眼淚最佳觀測點</span>
+            </div>
+            <a href="https://matsu.live/book-a-room" target="_blank" rel="noopener noreferrer" class="booking-card__cta" data-external aria-label="立即預訂 歷史建築梅石軍官茶室" style="display:block;text-decoration:none;"><span data-i18n="book_now">立即預訂</span></a>
+          </div>
+        </article>
+        <article class="booking-card">
+          <div class="booking-card__image" style="background: linear-gradient(135deg, #1a3a4a 0%, #0f2a3a 50%, #1a4a5a 100%);"><span class="booking-card__image-label" data-i18n="stay2_label">共享空間 · 藝文體驗</span></div>
+          <div class="booking-card__body">
+            <h3 class="booking-card__name" data-i18n="stay2_name">大梅石創生共享家</h3>
+            <div class="booking-card__rating"><span class="stars" aria-hidden="true">★★★★★</span><span class="booking-card__rating-num">4.7</span></div>
+            <div class="booking-card__price">NT$1,600<span data-i18n="stay_from">/晚起</span><span class="booking-card__price-note" data-i18n="stay_price_note">以官網為準</span></div>
+            <div class="booking-card__tags">
+              <span class="booking-card__tag" data-i18n="stay2_tag1">共享空間</span>
+              <span class="booking-card__tag" data-i18n="stay2_tag2">藝術家駐村</span>
+              <span class="booking-card__tag booking-card__tag--highlight" data-i18n="stay2_tag3">深度體驗</span>
+            </div>
+            <a href="https://matsu.live/book-a-room" target="_blank" rel="noopener noreferrer" class="booking-card__cta" data-external aria-label="立即預訂 大梅石創生共享家" style="display:block;text-decoration:none;"><span data-i18n="book_now">立即預訂</span></a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transport Panel -->
+  <div class="panel-overlay" id="panelTransport" role="dialog" aria-modal="false" aria-labelledby="transportTitle" aria-hidden="true">
+    <div class="panel-overlay__backdrop" data-close-panel></div>
+    <div class="panel-overlay__content">
+      <div class="panel-overlay__handle"><div class="panel-overlay__handle-bar"></div></div>
+      <div class="panel-overlay__header">
+        <h2 class="panel-overlay__title" id="transportTitle" data-i18n="transport_title">交通方式</h2>
+        <button class="panel-overlay__close" data-close-panel aria-label="關閉" data-i18n-aria="close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-overlay__body" id="transportBody"></div>
+    </div>
+  </div>
+
+  <!-- Me Panel -->
+  <div class="panel-overlay" id="panelProfile" role="dialog" aria-modal="false" aria-labelledby="meTitle" aria-hidden="true">
+    <div class="panel-overlay__backdrop" data-close-panel></div>
+    <div class="panel-overlay__content">
+      <div class="panel-overlay__handle"><div class="panel-overlay__handle-bar"></div></div>
+      <div class="panel-overlay__header">
+        <h2 class="panel-overlay__title" id="meTitle" data-i18n="me_title">我的</h2>
+        <button class="panel-overlay__close" data-close-panel aria-label="關閉" data-i18n-aria="close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="panel-overlay__body" id="meBody"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="nav-bar" aria-label="主選單">
+    <button class="nav-bar__item active" data-tab="map" aria-current="true" aria-label="地圖" data-i18n-aria="tab_map">
+      <svg class="nav-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+      <span class="nav-bar__label" data-i18n="tab_map">地圖</span>
+    </button>
+    <button class="nav-bar__item" data-tab="forecast" aria-label="預報" data-i18n-aria="tab_forecast">
+      <svg class="nav-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+      <span class="nav-bar__label" data-i18n="tab_forecast">預報</span>
+    </button>
+    <button class="nav-bar__item" data-tab="stay" aria-label="住宿" data-i18n-aria="tab_stay">
+      <svg class="nav-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 22V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v16"/><path d="M6 12V8"/><path d="M10 12V8"/><path d="M14 12V8"/><path d="M18 12V8"/><path d="M2 12h20"/><path d="M2 22h20"/><path d="M10 22v-4h4v4"/></svg>
+      <span class="nav-bar__label" data-i18n="tab_stay">住宿</span>
+    </button>
+    <button class="nav-bar__item" data-tab="transport" aria-label="交通" data-i18n-aria="tab_transport">
+      <svg class="nav-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M12 10V3"/></svg>
+      <span class="nav-bar__label" data-i18n="tab_transport">交通</span>
+    </button>
+    <button class="nav-bar__item" data-tab="profile" aria-label="我的" data-i18n-aria="tab_me">
+      <svg class="nav-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="nav-bar__label" data-i18n="tab_me">我的</span>
+    </button>
+  </nav>
+</div>
+
+<script src="vendor/maplibre-gl.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

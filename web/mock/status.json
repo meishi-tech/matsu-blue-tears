@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "generatedAt": "2026-11-09T09:00:00+08:00",
+  "sources": {
+    "cwa": {
+      "status": "not_configured",
+      "fetchedAt": null,
+      "datasets": [
+        "F-D0047-083",
+        "F-A0021-001"
+      ]
+    },
+    "tdx": {
+      "status": "not_configured",
+      "fetchedAt": null
+    },
+    "astro": {
+      "status": "computed"
+    }
+  },
+  "mode": "model",
+  "today": {
+    "date": "2026-11-09",
+    "score": 38,
+    "level": "low",
+    "season": "off",
+    "tempC": 19,
+    "windDir": "NE",
+    "windKmh": 18,
+    "wxZh": "多雲",
+    "wxEn": "Cloudy",
+    "pop": 20,
+    "moon": {
+      "phase": 0.73,
+      "illumination": 0.68,
+      "emoji": "🌖",
+      "nameZh": "虧凸月",
+      "nameEn": "Waning Gibbous"
+    },
+    "sunset": "2026-11-09T17:12:00+08:00",
+    "moonrise": "2026-11-09T20:10:00+08:00",
+    "moonset": "2026-11-09T09:40:00+08:00",
+    "bestWindow": {
+      "start": "2026-11-09T18:00:00+08:00",
+      "end": "2026-11-09T20:30:00+08:00",
+      "reasonZh": "日落後至月出前最暗",
+      "reasonEn": "Darkest between sunset and moonrise"
+    },
+    "tide": {
+      "nextType": "滿潮",
+      "nextTime": "2026-11-09T11:20:00+08:00",
+      "range": "中"
+    },
+    "seaTempC": null,
+    "fogAlert": false,
+    "summaryZh": "十一月非藍眼淚季節，月光偏亮、東北風稍強，今晚觀測機會偏低。",
+    "summaryEn": "November is off-season; bright moon and brisk NE wind make tonight a low-probability evening."
+  }
+}
