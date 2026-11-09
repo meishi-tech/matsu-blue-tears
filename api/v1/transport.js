@@ -2,7 +2,7 @@
 import { wrap } from '../../lib/handler.js';
 import { loadSources, envelope } from '../../lib/build.js';
 import * as tdx from '../../lib/tdx.js';
-import { staticFlights, staticFerries, INTER_ISLAND, STATIC_NOTICE } from '../../lib/schedules.js';
+import { staticFlights, staticFerries, INTER_ISLAND, STATIC_NOTICE, LIVE_NOTICE } from '../../lib/schedules.js';
 import { todayStr } from '../../lib/time.js';
 
 export default wrap(async () => {
@@ -33,7 +33,7 @@ export default wrap(async () => {
       interIsland: INTER_ISLAND,
       alerts: cwaData?.warnings?.alerts || [],
       scheduleSource,
-      staticNotice: STATIC_NOTICE,
+      staticNotice: scheduleSource.flights === 'tdx' && scheduleSource.ferries === 'tdx' ? LIVE_NOTICE : STATIC_NOTICE,
     },
   });
 });

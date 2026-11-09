@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vercel dev",
-    "test": "node --test tests/"
+    "test": "node --test tests/*.test.js"
   },
   "dependencies": {}
 }
