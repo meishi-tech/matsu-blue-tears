@@ -141,6 +141,44 @@ Base URL（production，2026-11-09 已部署並驗證）：`https://matsu-blue-t
 
 TDX 不可用時：`flights` 與 `ferries` 回傳每日固定班表（lib/schedules.js，status `unknown`），`sources.tdx.status = "not_configured"|"unavailable"`。
 
+## GET /transport-risk
+
+未來 7 日（offset 0 = 今天）臺馬航線停航風險、南北竿航班風險、可達性指數、信心度與房價係數建議，加上今日 TDX 實況橫幅資料。完整規格與規則門檻見 `contract-transport-risk-v1.md` A 節（梅石譯境清晨儀表板用）；規則版本 `rules.version = "2026.11-v1"`。
+
+- 查詢參數：`?date=YYYY-MM-DD` 覆寫「今天」（測試／回測用）。
+- `mode`：四個 CWA 資料集（`F-A0012-001` 海面、`F-D0047-081` 逐 3 小時、`F-D0047-083` 一週、`W-C0033-001` 特報）與 TDX 全部成功 → `"live"`；任一失敗 → `"degraded"`，`sources.cwa.status` 為 `partial|unavailable|not_configured`、`sources.cwa.errors[]` 列出失敗資料集，仍回傳可算的部分（缺海面預報時以陸上風級推估、`confidence: "low"`）。
+- `sources.cwa.issueTime`：海面預報發布時間（每 6 小時：04:30／10:30／16:30／22:30）。
+
+```json
+{
+  "ok": true, "generatedAt": "...", "mode": "live" | "degraded",
+  "sources": { "cwa": { "status": "live", "fetchedAt": "...", "datasets": ["F-A0012-001","F-D0047-081","F-D0047-083","W-C0033-001"], "issueTime": "2026-11-09T16:30:00+08:00" },
+               "tdx": { "status": "live" | "unavailable" | "not_configured", "fetchedAt": "..." } },
+  "today": {
+    "date": "2026-11-09",
+    "flights": { "total": 18, "cancelled": 0, "delayed": 0, "arrivedOrDeparted": 17, "remaining": 1,
+                 "lastFlight": { "flightNo": "B78776", "fromZh": "南竿", "toZh": "台北松山", "scheduled": "...", "statusZh": "出發" } | null } | null,
+    "ferries": { "taima": [ { "routeZh": "基隆港 → 南竿福澳港（新臺馬）", "scheduled": "...", "status": "on_time|cancelled|...", "statusZh": "...", "cancelReason": null } ],
+                 "tonightDeparture": { "status": "cancelled" | "on_time" | "pending" | "unknown", "note": "..." } } | null,
+    "alerts": [ { "type": "wind" | "fog" | "typhoon" | "other", "titleZh": "連江縣陸上強風特報", "validUntil": "..." } ]
+  },
+  "days": [ {
+    "date": "2026-11-10", "offset": 1, "dow": 2, "dowZh": "二", "zone": "action" | "watch",
+    "wx": "陰時多雲", "tmin": 15, "tmax": 19, "pop": 20,
+    "ferry":  { "score": 95, "level": "red", "levelZh": "停航機率高", "reasons": ["臺灣北部海面：7至8陣風10級…，浪高6轉5公尺"], "maintenance": true, "raw": { "wind": "...", "wave": "..." } | null },
+    "flight": { "score": 25, "level": "yellow", "levelZh": "注意", "reasons": ["陸上強風特報（至 11-10 23:00）"], "parts": { "fog": 0, "wind": 25, "other": 0 } },
+    "accessibility": 54, "confidence": "high" | "medium" | "low", "confidenceZh": "高|中|低",
+    "pricing": { "transportFactor": 1.0, "dowFactor": 1.0, "tags": ["交通存疑"], "actions": ["..."], "strandedRateHint": null | { "minPct": 85, "maxPct": 90 } }
+  } ],
+  "rules": { "version": "2026.11-v1", "ferryStandardUrl": "https://www.matsu-news.gov.tw/forum/article/4022", "clamp": [0.85, 1.3], "maxDailyStepPct": 15 }
+}
+```
+
+- `level` 一律 `green|yellow|orange|red`；船 `levelZh` 正常／注意／存疑／停航機率高，機 `levelZh` 正常／注意／易受影響／大量取消。
+- `ferry.maintenance`（週二航修）只是旗標，不計入 score。`zone`：offset 0–3 `action`、4–6 `watch`。
+- 總係數 clamp 與訂房進度係數由前端計算；後端只給 `transportFactor` 與 `dowFactor`（週五、六 1.1）。
+- 船的分數對應「抵達日 D」（= D−1 晚自基隆出發），以 CWA 海面預報對照全港通停航標準（陣風 ≥10 級或浪高 ≥4 公尺 → 95；持續 ≥7 級／陣風 9 級／浪 ≥3 公尺 → 65；6 級／浪 ≥2.5 → 40；浪 ≥2 → 25；其餘 5）。
+
 ## 後端實作備註（v1.0，2026-11-09）
 
 - 以上標「後端新增」的欄位皆為向下相容的補充，前端可忽略。
@@ -159,7 +197,8 @@ TDX 不可用時：`flights` 與 `ferries` 回傳每日固定班表（lib/schedu
 ## 資料來源（後端實作參考）
 
 - CWA 鄉鎮一週預報 連江縣：`GET https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-083?Authorization=KEY&LocationName=南竿鄉`
-- CWA 鄉鎮 3 天逐 3 小時 連江縣：`F-D0047-081`
+- CWA 鄉鎮 3 天逐 3 小時 連江縣：`F-D0047-081?LocationName=南竿鄉`（/transport-risk 航班霧／風判定）
+- CWA 海面天氣預報（臺灣北部海面／馬祖海面，5 天）：`GET https://opendata.cwa.gov.tw/fileapi/v1/opendataapi/F-A0012-001?Authorization=KEY&format=JSON`（fileapi，302 轉址後為 JSON；/transport-risk 船班判定）
 - CWA 潮汐預報 1 個月：`F-A0021-001?LocationId=09007010`（連江縣南竿鄉；北竿 09007020、莒光 09007030、東引 09007040 — 已驗證皆有資料）
 - CWA 海象觀測（浮標海溫）：`O-B0075-001?StationID=C6W08`（馬祖浮標，東引鄉；已驗證。缺測時 `seaTempC: null`、海溫因子 50）
 - CWA 天氣特報：`W-C0033-001?locationName=連江縣`（濃霧、強風）

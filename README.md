@@ -5,6 +5,7 @@
 
 - 網頁版（正式）：https://matsu-blue-tears.vercel.app
 - API：https://matsu-blue-tears.vercel.app/api/v1 （合約見 `docs/API-CONTRACT.md`）
+- `GET /api/v1/transport-risk`：未來 7 日臺馬航線／南北竿航班風險、可達性指數與房價係數建議（梅石譯境清晨儀表板用；CWA F-A0012-001 海面預報 + F-D0047-081/083 + 特報 + TDX 實況，`?date=YYYY-MM-DD` 可回測）
 - 隱私權政策：https://matsu-blue-tears.vercel.app/privacy-policy.html
 - GitHub Pages 預覽：https://meishi-tech.github.io/matsu-blue-tears/
 
@@ -12,7 +13,7 @@
 
 ```
 web/        前端（單頁、PWA；Capacitor 直接打包這個目錄）
-api/v1/     Vercel Serverless Functions：status / forecast / hotspots / transport
+api/v1/     Vercel Serverless Functions：status / forecast / hotspots / transport / transport-risk
 lib/        氣象署 CWA、TDX、天文計算、藍眼淚指數模型、熱點、靜態班表、快取
 tests/      node --test 單元測試與真實 API fixture
 mobile/     Capacitor 8 原生專案（ios/、android/）、圖示、建置腳本、keys/（不入版控）
