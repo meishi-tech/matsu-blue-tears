@@ -11,7 +11,7 @@ import { envelope } from '../../lib/build.js';
 import * as cwa from '../../lib/cwa.js';
 import * as tdx from '../../lib/tdx.js';
 import { fetchJson } from '../../lib/http.js';
-import { cached, DEFAULT_TTL_SEC } from '../../lib/cache.js';
+import { cacheGet, cacheSet, DEFAULT_TTL_SEC } from '../../lib/cache.js';
 import { buildTransportRisk, isDateStr } from '../../lib/transport-risk.js';
 import { todayStr, toIso08 } from '../../lib/time.js';
 
@@ -44,21 +44,25 @@ export function selfBaseUrl(req) {
 export async function loadTodayTransport(req, { fetchJsonImpl = fetchJson, loadAllImpl = tdx.loadAll } = {}) {
   const base = selfBaseUrl(req);
   if (!base) return loadAllImpl();
-  return cached(`self:transport:${base}`, async () => {
-    const json = await fetchJsonImpl(`${base}/api/v1/transport`, { timeoutMs: 9000 });
-    if (!json?.ok) throw new Error('/api/v1/transport returned ok=false');
-    const t = json.sources?.tdx || {};
-    const flightsLive = json.scheduleSource?.flights === 'tdx' && Array.isArray(json.flights);
-    const ferriesLive = json.scheduleSource?.ferries === 'tdx' && Array.isArray(json.ferries);
-    return {
-      status: t.status || (flightsLive || ferriesLive ? 'live' : 'unavailable'),
-      fetchedAt: t.fetchedAt || json.generatedAt || null,
-      flights: flightsLive ? { flights: json.flights } : null,
-      ferries: ferriesLive ? { ferries: json.ferries } : null,
-      errors: t.errors || [],
-      via: '/api/v1/transport',
-    };
-  }, DEFAULT_TTL_SEC);
+  const key = `self:transport:${base}`;
+  const hit = cacheGet(key);
+  if (hit) return hit;
+  const json = await fetchJsonImpl(`${base}/api/v1/transport`, { timeoutMs: 9000 });
+  if (!json?.ok) throw new Error('/api/v1/transport returned ok=false');
+  const t = json.sources?.tdx || {};
+  const flightsLive = json.scheduleSource?.flights === 'tdx' && Array.isArray(json.flights);
+  const ferriesLive = json.scheduleSource?.ferries === 'tdx' && Array.isArray(json.ferries);
+  const out = {
+    status: t.status || (flightsLive || ferriesLive ? 'live' : 'unavailable'),
+    fetchedAt: t.fetchedAt || json.generatedAt || null,
+    flights: flightsLive ? { flights: json.flights } : null,
+    ferries: ferriesLive ? { ferries: json.ferries } : null,
+    errors: t.errors || [],
+    via: '/api/v1/transport',
+  };
+  // 完整結果快取 10 分鐘；/transport 本身被 TDX 429 打成部分結果時只留 60 秒，讓下次請求儘早拿到完整版
+  const complete = flightsLive && ferriesLive && !out.errors.length;
+  return cacheSet(key, out, complete ? DEFAULT_TTL_SEC : 60);
 }
 
 export default wrap(async (req) => {
