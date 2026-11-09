@@ -1,10 +1,17 @@
 // GET /api/v1/transport-risk — 未來 7 日臺馬航線／南北竿航班風險、可達性指數、房價係數建議 + 今日實況
 // 規格：design/contract-transport-risk-v1.md A 節（docs/API-CONTRACT.md 摘要）
 // 查詢參數：?date=YYYY-MM-DD 覆寫「今天」（測試／回測用；預設台灣時間今日）
+//
+// 今日實況（TDX）不直接打 TDX：本專案的 TDX 金鑰配額為每分鐘 5 次，而一次 tdx.loadAll() 就是 5 次
+// （LZN/MFK 出發＋到達 FIDS 4 次 + 船班看板 1 次），/transport 與本端點同時冷啟動必定互相 429。
+// 因此改讀同一主機上、已由 Vercel Edge 快取 10 分鐘的 /api/v1/transport，讓兩個端點共用同一份 TDX 結果；
+// 沒有 host（單元測試、直接 import）時才退回 tdx.loadAll()。
 import { wrap } from '../../lib/handler.js';
 import { envelope } from '../../lib/build.js';
 import * as cwa from '../../lib/cwa.js';
 import * as tdx from '../../lib/tdx.js';
+import { fetchJson } from '../../lib/http.js';
+import { cached, DEFAULT_TTL_SEC } from '../../lib/cache.js';
 import { buildTransportRisk, isDateStr } from '../../lib/transport-risk.js';
 import { todayStr, toIso08 } from '../../lib/time.js';
 
@@ -21,13 +28,46 @@ const isoOrNull = (s) => {
   return Number.isNaN(d.getTime()) ? null : toIso08(d);
 };
 
+/** 由請求推出本站 base URL（SELF_BASE_URL 可覆寫）；無 host 回 null */
+export function selfBaseUrl(req) {
+  if (process.env.SELF_BASE_URL) return process.env.SELF_BASE_URL.replace(/\/$/, '');
+  const host = req?.headers?.host;
+  if (!host) return null;
+  const proto = req.headers['x-forwarded-proto'] || (/^(localhost|127\.0\.0\.1)(:|$)/.test(host) ? 'http' : 'https');
+  return `${proto}://${host}`;
+}
+
+/**
+ * 取今日實況：優先讀本站 /api/v1/transport（Edge 快取），轉成 tdx.loadAll() 相容結構；
+ * TDX 退回靜態班表（scheduleSource != 'tdx'）時該類別視為無資料（null），避免把 unknown 狀態算成統計。
+ */
+export async function loadTodayTransport(req, { fetchJsonImpl = fetchJson, loadAllImpl = tdx.loadAll } = {}) {
+  const base = selfBaseUrl(req);
+  if (!base) return loadAllImpl();
+  return cached(`self:transport:${base}`, async () => {
+    const json = await fetchJsonImpl(`${base}/api/v1/transport`, { timeoutMs: 9000 });
+    if (!json?.ok) throw new Error('/api/v1/transport returned ok=false');
+    const t = json.sources?.tdx || {};
+    const flightsLive = json.scheduleSource?.flights === 'tdx' && Array.isArray(json.flights);
+    const ferriesLive = json.scheduleSource?.ferries === 'tdx' && Array.isArray(json.ferries);
+    return {
+      status: t.status || (flightsLive || ferriesLive ? 'live' : 'unavailable'),
+      fetchedAt: t.fetchedAt || json.generatedAt || null,
+      flights: flightsLive ? { flights: json.flights } : null,
+      ferries: ferriesLive ? { ferries: json.ferries } : null,
+      errors: t.errors || [],
+      via: '/api/v1/transport',
+    };
+  }, DEFAULT_TTL_SEC);
+}
+
 export default wrap(async (req) => {
   const now = new Date();
   const qs = new URL(req.url || '/', 'http://localhost').searchParams;
   const dateParam = qs.get('date');
   const today = isDateStr(dateParam) ? dateParam : todayStr(now);
 
-  const settled = await Promise.allSettled([...CWA_DATASETS.map((d) => d.fetch()), tdx.loadAll()]);
+  const settled = await Promise.allSettled([...CWA_DATASETS.map((d) => d.fetch()), loadTodayTransport(req)]);
   const cwaResults = settled.slice(0, CWA_DATASETS.length);
   const tdxResult = settled[CWA_DATASETS.length];
 
@@ -52,11 +92,11 @@ export default wrap(async (req) => {
     ? 'not_configured'
     : datasets.length === CWA_DATASETS.length ? 'live' : datasets.length ? 'partial' : 'unavailable';
 
-  // ---- TDX：loadAll 本身已把個別失敗降級；整個 reject 時視為 unavailable ----
+  // ---- TDX（經 /transport 或直接）：整個 reject 時視為 unavailable ----
   const tdxData = tdxResult.status === 'fulfilled'
     ? tdxResult.value
     : { status: 'unavailable', fetchedAt: null, flights: null, ferries: null, errors: [tdxResult.reason?.message || String(tdxResult.reason)] };
-  const tdxOk = tdxData.status === 'live' && !tdxData.errors?.length;
+  const tdxOk = tdxData.status === 'live' && !tdxData.errors?.length && tdxData.flights && tdxData.ferries;
 
   const built = buildTransportRisk({ marine: raw.marine, j081: raw.j081, j083: raw.j083, alerts: raw.alerts, tdx: tdxData, today, now });
 
@@ -73,6 +113,7 @@ export default wrap(async (req) => {
       tdx: {
         status: tdxData.status,
         fetchedAt: isoOrNull(tdxData.fetchedAt),
+        ...(tdxData.via ? { via: tdxData.via } : {}),
         ...(tdxData.errors?.length ? { errors: tdxData.errors } : {}),
       },
     },

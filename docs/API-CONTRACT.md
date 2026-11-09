@@ -148,6 +148,7 @@ TDX 不可用時：`flights` 與 `ferries` 回傳每日固定班表（lib/schedu
 - 查詢參數：`?date=YYYY-MM-DD` 覆寫「今天」（測試／回測用）。
 - `mode`：四個 CWA 資料集（`F-A0012-001` 海面、`F-D0047-081` 逐 3 小時、`F-D0047-083` 一週、`W-C0033-001` 特報）與 TDX 全部成功 → `"live"`；任一失敗 → `"degraded"`，`sources.cwa.status` 為 `partial|unavailable|not_configured`、`sources.cwa.errors[]` 列出失敗資料集，仍回傳可算的部分（缺海面預報時以陸上風級推估、`confidence: "low"`）。
 - `sources.cwa.issueTime`：海面預報發布時間（每 6 小時：04:30／10:30／16:30／22:30）。
+- `today` 的 TDX 實況不直接打 TDX，而是讀同一主機、Edge 快取 10 分鐘的 `/api/v1/transport`（`sources.tdx.via`），因為 TDX 金鑰配額為每分鐘 5 次，剛好等於一次 `/transport` 的用量；`/transport` 退回靜態班表時，對應的 `today.flights`／`today.ferries` 為 `null`。
 
 ```json
 {

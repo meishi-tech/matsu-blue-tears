@@ -6,7 +6,8 @@ import {
   parseBeaufort, parseWave, marineByDate, marineIssueTime, threeHourly, weekly, activeAlerts,
   ferryRisk, flightRisk, accessibility, pricingAdvice, buildTransportRisk, isDateStr, RULES,
 } from '../lib/transport-risk.js';
-import handler from '../api/v1/transport-risk.js';
+import handler, { loadTodayTransport, selfBaseUrl } from '../api/v1/transport-risk.js';
+import { cacheClear } from '../lib/cache.js';
 
 const fx = (name) => JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
 const TODAY = '2026-11-09';
@@ -221,6 +222,35 @@ test('降級：缺海面預報仍回 7 天（以陸上風級推估）；TDX 缺 
   assert.equal(none.days[0].flight.score, null);
   assert.equal(none.days[0].accessibility, null);
   assert.deepEqual(none.today.alerts, []);
+});
+
+test('loadTodayTransport：由本站 /api/v1/transport 取今日實況（共用 TDX 配額）；靜態班表視為無資料', async () => {
+  cacheClear();
+  const transport = fx('api-v1-transport-2026-11-09.json');
+  const calls = [];
+  const fetchJsonImpl = async (url) => { calls.push(url); return transport; };
+  const req = { headers: { host: 'matsu-blue-tears.vercel.app' } };
+  const t = await loadTodayTransport(req, { fetchJsonImpl });
+  assert.deepEqual(calls, ['https://matsu-blue-tears.vercel.app/api/v1/transport']);
+  assert.equal(t.status, 'live');
+  assert.equal(t.via, '/api/v1/transport');
+  assert.equal(t.flights.flights.length, 18);
+  assert.equal(t.ferries.ferries.length, 70);
+  // 同一實例內快取：第二次不再打
+  await loadTodayTransport(req, { fetchJsonImpl });
+  assert.equal(calls.length, 1);
+  cacheClear();
+  const staticResp = { ...transport, scheduleSource: { flights: 'static_timetable', ferries: 'tdx' }, sources: { ...transport.sources, tdx: { status: 'unavailable', fetchedAt: null, errors: ['HTTP 429'] } } };
+  const s = await loadTodayTransport({ headers: { host: 'localhost:3000' } }, { fetchJsonImpl: async (url) => { calls.push(url); return staticResp; } });
+  assert.equal(calls[1], 'http://localhost:3000/api/v1/transport');
+  assert.equal(s.flights, null);
+  assert.equal(s.ferries.ferries.length, 70);
+  assert.deepEqual(s.errors, ['HTTP 429']);
+  // 無 host → 退回 tdx.loadAll
+  const fallback = await loadTodayTransport({ headers: {} }, { fetchJsonImpl, loadAllImpl: async () => ({ status: 'not_configured', flights: null, ferries: null, errors: [] }) });
+  assert.equal(fallback.status, 'not_configured');
+  assert.equal(selfBaseUrl({ headers: { host: 'x.vercel.app', 'x-forwarded-proto': 'https' } }), 'https://x.vercel.app');
+  cacheClear();
 });
 
 test('isDateStr', () => {
